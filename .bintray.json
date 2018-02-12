@@ -1,0 +1,27 @@
+{
+    "package": {
+        "name": "booklet-DataFrame",
+        "repo": "wip",
+        "subject": "squarebracketassociates",
+        "desc": "Smacc",
+        "licenses": ["MIT"],
+        "website_url": "https://github.com/SquareBracketAssociates/Booklet-DataFrame",
+        "issue_tracker_url": "https://github.com/SquareBracketAssociates/Booklet-DataFrame/issues",
+        "vcs_url": "https://github.com/SquareBracketAssociates/Booklet-DataFrame.git",
+        "labels": ["work-in-progress"]
+    },
+
+    "version": {
+        "name": "latest",
+        "desc": "Latest successful build"
+    },
+
+    "files": [
+        {
+            "includePattern": "build/book.spiral.pdf",
+            "uploadPattern": "dataframe-wip.pdf",
+            "matrixParams": { "override": 1 }
+        }
+    ],
+    "publish": true
+}
