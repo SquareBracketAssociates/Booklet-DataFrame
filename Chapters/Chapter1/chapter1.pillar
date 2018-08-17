@@ -1,11 +1,21 @@
-+Pillar logo>figures/pillar.png|width=30+
-Welcome to Pillar's little user-guide !!
+!!!Why data frames?
 
-To write a book, you can create chapters and include them into ''book.pillar'' (see the ''book.pillar'' file)
-or directly edit the file.
-If you don't know ''Pillar'', its documentation is *here>https://ci.inria.fr/pharo-contribution/job/EnterprisePharoBook/lastSuccessfulBuild/artifact/book-result/PillarChap/Pillar.html*
+Data frames are the essential part of the data science toolkit. They are the specialized data structures for tabular data sets that provide us with a simple and powerful API for summarizing, cleaning, and manipulating a wealth of data sources that are currently cumbersome to use. The DataFrame and DataSeries collections are specifically designed for working with structured data.
 
-The book is generated directly in HTML and LaTeX with the command ==make book==
+!!!DataFrame project
 
-You can compile just one chapter with the command ==make book-result/chapterPathAndName.format==
-For example, for the first chapter in LaTeX: ==make book-result/Chapters/Chapter1/chapter1.tex==
+I implemented the first version of DataFrame as part of my Google Summer of Code project in 2017${footnote:https://summerofcode.withgoogle.com/projects/5883002734247936}$.
+
+GitHub repository${footnote:https://github.com/PolyMathOrg/DataFrame}$ of DataFrame project contains four packages:
+
+# ""DataFrame-Core"" - a lightweight package with no external dependencies. Contains the definition of the collections.
+# ""DataFrame-Tools"" - contains additional tools and depends on many other packages, such as Roassal or NeoCSV.
+# ""DataFrame-Core-Tests"" - tests for the Core package.
+# ""DataFrame-Tools-Tests"" - additional tests for the Tools package.
+
+Such separation allows you to load only specific parts of the DataFrame project. For example, you can load the Core package and enjoy the whole functionality of DataFrame collections without loading the entire toolset for visualizations with all its dependencies. Or you can load both Core and Tools packages, but not the tests. I will guideyou through the instalation in the next section.
+
+!!!Installation
+
+
+!!!How to contribute?

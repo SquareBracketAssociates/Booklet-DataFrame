@@ -1,12 +1,12 @@
-!My First book
-
-!!Compilation
+!!Introduction
 
 ${inputFile:Chapters/Chapter1/chapter1.pillar}$
 
-!!Edition and Templates
+!!Tutorial
 
 ${inputFile:Chapters/Chapter2/chapter2.pillar}$
 
-+>figures/pharo.png|width=30+
-+>figures/rmod.png|width=30+
+!!Examples
+
+${inputFile:Chapters/Chapter3/chapter3.pillar}$
+
