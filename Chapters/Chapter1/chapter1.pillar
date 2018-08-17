@@ -17,5 +17,24 @@ Such separation allows you to load only specific parts of the DataFrame project.
 
 !!!Installation
 
+Execute the following script in your image to install the Core package of DataFrame.
+
+[[[language=smalltalk
+Metacello new
+  baseline: 'DataFrame';
+  repository: 'github://PolyMathOrg/DataFrame';
+  load: #Core.
+]]]
+
+You can choose one of the following groups for installation:
+
+- ==#Core== - just the core package
+- ==#CoreTest== - core package and its tests
+- ==#Tools== - core package and additional tools
+- ==#Tests== - core package, tools, and all the tests
+
+The last option is selected by default. So you can execute the above script without any group parameter and it will load the whole DataFrame project. But keep in mind that loading all the dependencies may take quite a while.
 
 !!!How to contribute?
+
+DataFrame is an open source project developed in a collaborative public manner. We need your help to make it better. Every contribution counts - should it be a fixed typo in documentation or the implementation of a faster algorithm. Follow this link to find the up-to-date contribution guide: https://github.com/PolyMathOrg/DataFrame/blob/master/CONTRIBUTING.md.
