@@ -1,1 +1,111 @@
 !! Analysing tweets with #esug18 hashtag
+
+This example is based on a simple demonstration of DataFrame that I have presented at 26th International Smalltalk Joint Conference 2018 in Cagliari, Italy${footnote:http://www.esug.org/}$ together with Serge Stinckwich using the newly announced GTDocumenter${footnote:https://github.com/feenkcom/gtoolkit-documenter}$. In this example we will see how DataFrame can be used for analysing data collected from Twitter.
+
+!!! Data collection
+
+Collecting data from Twitter is a complex topic which requires creating a developer's account, creating an App, and understanding the basics of Twitter API. I strongly encourage readers to learn these things, but because API changes, and since this is out of the scope of this booklet I will not include any instructions on how to collect data from Twitter, but rather direct you to the official documentation.
+
+For the purpose of this example you can use the CSV file with all the Tweets collected by me for the presentation. It includes all tweets with #esug18 hashtag since the beginning of time till the evening of Wednesday, September 12.
+
+!!! Loading the dataset
+
+We start by creating a DataFrame from the CSV file.  If you evaluate the code block below, you will see that DataFrame reads the data from a file, and GTDocumenter outputs the head (first 5 rows) of that DataFrame. What is really important in this case is that the other rows get rendered only when you scroll down. So we don't have to worry about crashing our image by trying to output a huge dataset.
+
+[[[
+df := DataFrame fromCSV: '/Users/oleks/Desktop/esug.csv' header: true.
+]]]
+
+!!! Exploring the dataset
+
+We will try to answer some basic questions about this dataset. For example, how many rows and columns does it have?
+
+[[[
+df dimensions.
+]]]
+
+What are the column names?
+[[[
+df columnNames.
+]]]
+
+
+What are the datatypes of values stored in these columns?
+[[[
+df columnTypes.
+]]]
+
+!!! Cleaning the dataset
+
+In the pevious section we have seen several problems with this dataset which could complicate our analysis. One of these problems was the fact that all values loaded from CSV file are considered Strings. 
+
+!!!! Specifying column types
+
+We are working on automatic type inference, but for now we can just manually convert several columns to a given type.
+
+[[[
+df toColumn: #date applyElementwise: [ :each | each asDate ].
+df toColumn: #time applyElementwise: [ :each | each asTime ].
+df toColumns: #(likes retweets) applyElementwise: [ :each | each asNumber ].
+]]]
+
+
+[[[
+df columnTypes.
+]]]
+
+
+!!!! Parsing mentions string as an array
+
+As we have seen during data exploration, mentions in our dataset are stored as arrays represented as strings of the following format: `[Mention1, Mention2]`.
+
+[[[
+arrayParser := [ :aString | 
+	(aString
+		trimBoth: [ :char | { $[ . $' . $] } includes: char ])
+		splitOn: ''', ''' ].
+]]]
+
+[[[
+(arrayParser value: '[''hello'', ''world'']') = (OrderedCollection with: 'hello' with: 'world'). 
+]]]
+
+
+[[[
+df toColumn: #mentions applyElementwise: [ :each |
+	arrayParser value: each ].
+]]]
+
+
+!!!! Specifying the time range
+
+ESUG 2018 started on Monday, September 10. However, we have many tweets with #esug18 hashtag before that date.
+
+[[[
+df selectAllWhere: [ :date | date < '10 Sept 2018' asDate ].
+]]]
+
+
+For the purpose of this demonstration we can specify a certain time range and ignore all the tweets outside it. 
+
+
+[[[
+df := df selectAllWhere: [ :date | (date >= '10 Sept 2018' asDate) and: (date <= '14 Sept 2018' asDate) ].
+]]]
+
+
+Who has the most likes in total?
+[[[
+(df select: #(author likes) groupBy: #author aggregate: #sum) orderBy: #likes. 
+]]]
+
+How many tweets does Stephan Eggermont have?
+
+[[[
+df selectAllWhere: [ :author | author = 'Stephan Eggermont' ]
+]]]
+
+[[[
+(df select: #(author likes) groupBy: #author aggregate: #average) orderBy: #likes.
+]]]
+How many tweets does'

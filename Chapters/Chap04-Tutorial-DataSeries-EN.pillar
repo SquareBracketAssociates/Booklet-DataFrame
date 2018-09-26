@@ -1,1 +1,63 @@
 !! DataSeries
+
+!!! Creating DataSeries
+
+DataSeries can be created from an array of values
+
+[[[
+series := DataSeries fromArray: #(a b c).
+]]]
+
+By extending the Collection class DataFrame library provides us with a handy shortcut for converting any collection (e.g. an Array) to DataSeries
+
+[[[
+series := #(a b c) asDataSeries.
+]]]
+
+By default the keys will be initialized with an interval `(1 to: self size)`. The name of a newly created series is considered empty and set by default to `nil`. You can always change the name and keys of your series using these messages
+
+[[[
+series name: 'letters'.
+series keys: #(k1 k2 k3).
+]]]
+
+!!! Accessing elements of DataSeries
+
+When accessing the elements of a DataSeries, you can think of is as an Array. `at:` message allows you to access elements by their index, with `at:put:` you can modify the given element.
+
+[[[
+series at: 2.    "b"
+series at: 3 put: 'x'.
+]]] 
+
+Besides the standard Array accessors, DataSeries provides additional operations for accessing elements by their keys
+
+[[[
+series atKey: #k2.    "b"
+series atKey: #k3 put: 'x'.
+]]] 
+
+Messages for enumerating, such as `do:` or `withIndexDo:` work the same as in Array, and the `collect:` message creates a new DataSerie preserving the name and keys of the receiver.
+
+[[[
+newSeries := series collect: [ :each | each, 'x' ].
+newSeries name.         "letters"
+newSeries atKey: 'k1'.  "ax"
+]]]
+
+!!! Adding new elements to DataSeries
+Since all the elements of DataSeries are expected to have keys, in order to add a new element you must specify a key that should be associated with it
+
+[[[
+series add: 'x' atKey: #k4.
+]]] 
+
+In future there will also be an `add:` message that will choose a default key value or even predict the next element of a sequence of keys. For example, if keys are `#(1 2 3 4 5)`, the new element will be associated with key `6`, if the sequence of keys is `#(2 4 6)`, the next key will be `8`. Perhaps, it will even be possible to predict the next key in symbolic sequences, such as `#(a b c d)` or `#(k1 k2 k3)`. Such functionality is not easy to implement, so we leave it for future releases of DataFrame library.
+
+Another way of adding an element to DataSeries is by using the `atKey:put:` message with a non-existing key. Inspired by Pandas, `atKey:put:` modifies an element at a given key if such key exists in a DataSeries, or adds a new element associeted with that key, if it wasn't found.
+
+[[[
+series atKey: #k4 put: 'x'.
+]]]
+
+Keep in mind that both `add:atKey:` and `atKey:put:` messages don't create a new series, but modify the existing one. So use them with caution.
