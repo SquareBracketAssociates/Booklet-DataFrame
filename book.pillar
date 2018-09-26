@@ -1,8 +1,24 @@
 
 ! Introduction
 
-${inputFile:Chapters/Chap01-TinyBlog-Model-FR.pillar}$
+${inputFile:Chapters/Chap01-Introduction-TabularData-EN.pillar}$
 
-${inputFile:Chapters/Chap02-TinyBlog-ModelExtensionTests-FR.pillar}$
+${inputFile:Chapters/Chap02-Introduction-OtherDataFrames-EN.pillar}$
 
-${inputFile:Chapters/Chap03-TinyBlog-Teapot-FR.pillar}$
+${inputFile:Chapters/Chap03-Introduction-DataFrameProject-EN.pillar}$
+
+! Tutorial
+
+${inputFile:Chapters/Chap04-Tutorial-DataSeries-EN.pillar}$
+
+${inputFile:Chapters/Chap05-Tutorial-DataFrame-EN.pillar}$
+
+${inputFile:Chapters/Chap06-Tutorial-ReadingWriting-EN.pillar}$
+
+${inputFile:Chapters/Chap07-Tutorial-DataVisualization-EN.pillar}$
+
+! Examples
+
+${inputFile:Chapters/Chap08-Examples-IrisDataset-EN.pillar}$
+
+${inputFile:Chapters/Chap09-Examples-EsugTweets-EN.pillar}$
