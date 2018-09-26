@@ -1,12 +1,8 @@
-!!Introduction
 
-${inputFile:Chapters/Chapter1/chapter1.pillar}$
+! Introduction
 
-!!Tutorial
+${inputFile:Chapters/Chap01-TinyBlog-Model-FR.pillar}$
 
-${inputFile:Chapters/Chapter2/chapter2.pillar}$
+${inputFile:Chapters/Chap02-TinyBlog-ModelExtensionTests-FR.pillar}$
 
-!!Examples
-
-${inputFile:Chapters/Chapter3/chapter3.pillar}$
-
+${inputFile:Chapters/Chap03-TinyBlog-Teapot-FR.pillar}$

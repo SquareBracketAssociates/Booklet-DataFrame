@@ -1,11 +1,11 @@
 MAIN := $(shell ./pillar introspect mainDocument)
 
+CHAPTERS := $(shell ./pillar introspect chapters)
 OUTPUTDIRECTORY := $(shell ./pillar introspect outputDirectory)
 LATEXTEMPLATE := $(shell ./pillar introspect latexTemplate)
 LATEXCHAPTERTEMPLATE := $(shell ./pillar introspect latexChapterTemplate)
 HTMLTEMPLATE := $(shell ./pillar introspect htmlTemplate)
 HTMLCHAPTERTEMPLATE := $(shell ./pillar introspect htmlChapterTemplate)
-CHAPTERS := $(shell ./pillar introspect chapters)
 
 .phony: all book chapters
 
