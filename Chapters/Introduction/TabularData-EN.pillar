@@ -1,3 +1,3 @@
-!! Data frames in other languages
+!! Tabular Data
 
 Data frames are the essential part of the data science toolkit. They are the specialized data structures for tabular data sets that provide us with a simple and powerful API for summarizing, cleaning, and manipulating a wealth of data sources that are currently cumbersome to use. The DataFrame and DataSeries collections are specifically designed for working with structured data.
