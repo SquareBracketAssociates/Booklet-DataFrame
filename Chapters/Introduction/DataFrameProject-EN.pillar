@@ -4,7 +4,15 @@ I have implemented the first version of DataFrame in 2017 as part of my Google S
 
 !!! PolyMath
 
-DataFrame was created as part of the PolyMath project. 
+DataFrame was created as part of the PolyMath project - an open source initiative that brings the power of scientific computing to Pharo. Aside from ""DataFrame"", described in this booklet, PolyMath project hosts two other libraries: ""PolyMath"" and ""TensorFlow"".
+
+!!!! PolyMath
+
+General purpose numerical computation framework in Smalltalk, similar to numpy and scipy libraries in Python, R, Julia, and SciRuby. First version of PolyMath was implemented by Daniel Uber. Now, thanks to many different contributors, PolyMath has grown into a fully functional framework for numerical computations. PolyMath provides two main data structures: PMMatrix and PMVector, and covers topics such as statistical moments, polynomials, interpolations, integration, series, vector algebra, ordinary differential equations, complex numbers, quaternions, KD-trees, random number generation, arbitrary floating-point arithmetics etc.
+
+!!!! TensorFlow
+
+
 
 !!! License
 
@@ -14,10 +22,10 @@ All source code and documentation of DataFrame can be found in the public reposi
 
 DataFrame project contains four packages:
 
-# ""DataFrame-Core"" - a lightweight package with no external dependencies. Contains the definition of the collections.
-# ""DataFrame-Tools"" - contains additional tools and depends on many other packages, such as Roassal or NeoCSV.
-# ""DataFrame-Core-Tests"" - tests for the Core package.
-# ""DataFrame-Tools-Tests"" - additional tests for the Tools package.
+1. ""DataFrame-Core"" - a lightweight package with no external dependencies. Contains the definition of the collections.
+2. ""DataFrame-Tools"" - contains additional tools and depends on many other packages, such as Roassal or NeoCSV.
+3. ""DataFrame-Core-Tests"" - tests for the Core package.
+4. ""DataFrame-Tools-Tests"" - additional tests for the Tools package.
 
 Such separation allows you to load only specific parts of the DataFrame project. For example, you can load the Core package and enjoy the whole functionality of DataFrame collections without loading the entire toolset for visualizations with all its dependencies. Or you can load both Core and Tools packages, but not the tests. I will guideyou through the instalation in the next section.
 

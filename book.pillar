@@ -5,18 +5,24 @@ ${inputFile:Chapters/Introduction/TabularData-EN.pillar}$
 
 ${inputFile:Chapters/Introduction/DataFrameProject-EN.pillar}$
 
-! Tutorial
+! DataFrame Core
 
-${inputFile:Chapters/Tutorial/DataSeries-EN.pillar}$
+${inputFile:Chapters/Core/DataSeries-EN.pillar}$
 
-${inputFile:Chapters/Tutorial/DataFrame-EN.pillar}$
+${inputFile:Chapters/Core/DataFrame-EN.pillar}$
 
-${inputFile:Chapters/Tutorial/ReadingWriting-EN.pillar}$
+! DataFrame Tools
 
-${inputFile:Chapters/Tutorial/DataVisualization-EN.pillar}$
+${inputFile:Chapters/Tools/ReadingWriting-EN.pillar}$
+
+${inputFile:Chapters/Tools/DataVisualization-EN.pillar}$
+
+${inputFile:Chapters/Tools/Documentation-EN.pillar}$
 
 ! Examples
 
 ${inputFile:Chapters/Examples/IrisDataset-EN.pillar}$
+
+${inputFile:Chapters/Examples/PCA-EN.pillar}$
 
 ${inputFile:Chapters/Examples/EsugTweets-EN.pillar}$
