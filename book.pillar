@@ -1,28 +1,28 @@
 
 ! Introduction
 
-${inputFile:Chapters/Introduction/TabularData-EN.pillar}$
+${inputFile:path=Chapters/Introduction/TabularData-EN.pillar}$
 
-${inputFile:Chapters/Introduction/DataFrameProject-EN.pillar}$
+${inputFile:path=Chapters/Introduction/DataFrameProject-EN.pillar}$
 
 ! DataFrame Core
 
-${inputFile:Chapters/Core/DataSeries-EN.pillar}$
+${inputFile:path=Chapters/Core/DataSeries-EN.pillar}$
 
-${inputFile:Chapters/Core/DataFrame-EN.pillar}$
+${inputFile:path=Chapters/Core/DataFrame-EN.pillar}$
 
 ! DataFrame Tools
 
-${inputFile:Chapters/Tools/ReadingWriting-EN.pillar}$
+${inputFile:path=Chapters/Tools/ReadingWriting-EN.pillar}$
 
-${inputFile:Chapters/Tools/DataVisualization-EN.pillar}$
+${inputFile:path=Chapters/Tools/DataVisualization-EN.pillar}$
 
-${inputFile:Chapters/Tools/Documentation-EN.pillar}$
+${inputFile:path=Chapters/Tools/Documentation-EN.pillar}$
 
 ! Examples
 
-${inputFile:Chapters/Examples/IrisDataset-EN.pillar}$
+${inputFile:path=Chapters/Examples/IrisDataset-EN.pillar}$
 
-${inputFile:Chapters/Examples/PCA-EN.pillar}$
+${inputFile:path=Chapters/Examples/PCA-EN.pillar}$
 
-${inputFile:Chapters/Examples/EsugTweets-EN.pillar}$
+${inputFile:path=Chapters/Examples/EsugTweets-EN.pillar}$
