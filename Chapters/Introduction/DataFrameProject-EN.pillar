@@ -1,24 +1,29 @@
-!! DataFrame Project
+!! About DataFrame
 
-I have implemented the first version of DataFrame in 2017 as part of my Google Summer of Code project${footnote:https://summerofcode.withgoogle.com/projects/5883002734247936}$ and presented at the 25th International Smalltalk Joint Conference (ESUG 2017) in Maribor, Slovenia. Since then the project has grown and evelved thanks to the contributions of many other developers.
+Data frames are the one of the essential parts of the data science toolkit. They are the specialized data structures for tabular data sets that provide us with a simple and powerful API for summarizing, cleaning, and manipulating a wealth of data sources that are currently cumbersome to use. In the DataFrame project, DataFrame and DataSeries collections are specifically designed for working with structured data.
+
+!!! DataFrame Project
+
+I have implemented the first version of DataFrame in 2017 as part of my Google Summer of Code project${footnote:https://summerofcode.withgoogle.com/projects/5883002734247936}$ and presented at the 25th International Smalltalk Joint Conference (ESUG 2017) in Maribor, Slovenia. Since then the project has grown and evolved thanks to the contributions of many other developers.
 
 !!! PolyMath
 
-DataFrame was created as part of the PolyMath project - an open source initiative that brings the power of scientific computing to Pharo. Aside from ""DataFrame"", described in this booklet, PolyMath project hosts two other libraries: ""PolyMath"" and ""TensorFlow"".
+DataFrame was created as part of the PolyMath project - an open-source initiative that brings the power of scientific computing to Pharo. 
+Aside from ""DataFrame"", described in this booklet, PolyMath project hosts two other libraries: ""PolyMath"" and ""TensorFlow"". 
 
 !!!! PolyMath
 
-General purpose numerical computation framework in Smalltalk, similar to numpy and scipy libraries in Python, R, Julia, and SciRuby. First version of PolyMath was implemented by Daniel Uber. Now, thanks to many different contributors, PolyMath has grown into a fully functional framework for numerical computations. PolyMath provides two main data structures: PMMatrix and PMVector, and covers topics such as statistical moments, polynomials, interpolations, integration, series, vector algebra, ordinary differential equations, complex numbers, quaternions, KD-trees, random number generation, arbitrary floating-point arithmetics etc.
+PolyMath is a general purpose numerical computation framework in Pharo, similar to numpy and scipy libraries in Python, R, Julia, and SciRuby. 
+PolyMath is based on the initial contents of the book of Didier Besset entitled ''Numerical methods in Smalltalk'' and available at *http://books.pharo.org*. Now, thanks to many different contributors, PolyMath has grown into a fully functional framework for numerical computations. PolyMath provides two main data structures: PMMatrix and PMVector, and covers topics such as statistical moments, polynomials, interpolations, integration, series, vector algebra, ordinary differential equations, complex numbers, quaternions, KD-trees, random number generation, arbitrary floating-point arithmetics etc.
 
 !!!! TensorFlow
 
 
-
-!!! License
+!!!! License
 
 All source code and documentation of DataFrame can be found in the public repository on GitHub${footnote:https://github.com/PolyMathOrg/DataFrame}$. DataFrame is free and open source, distributed under the MIT public license.
 
-!!! Project structure
+!!! DataFrame project structure
 
 DataFrame project contains four packages:
 
@@ -51,4 +56,4 @@ The last option is selected by default. So you can execute the above script with
 
 !!! How to contribute?
 
-DataFrame is an open source project developed in a collaborative public manner. We need your help to make it better. Every contribution counts - should it be a fixed typo in documentation or the implementation of a faster algorithm. Follow this link to find the up-to-date contribution guide: https://github.com/PolyMathOrg/DataFrame/blob/master/CONTRIBUTING.md.
+DataFrame is an open source project developed in a collaborative public manner. We need your help to make it better. Every contribution counts - should it be a fixed typo in documentation or the implementation of a faster algorithm. Follow this link to find the up-to-date contribution guide: *https://github.com/PolyMathOrg/DataFrame/blob/master/CONTRIBUTING.md*.
