@@ -1,6 +1,4 @@
-${inputFile:path=Chapters/Introduction/TabularData-EN.pillar}$
 ${inputFile:path=Chapters/Introduction/DataFrameProject-EN.pillar}$
-
 
 ${inputFile:path=Chapters/Core/DataSeries-EN.pillar}$
 ${inputFile:path=Chapters/Core/DataFrame-EN.pillar}$
