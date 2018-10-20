@@ -1,20 +1,40 @@
 !! DataSeries
 
+A DataSeries is kind of dictionary. It manages data based on keys. A ==DataSeries== is the elementary part of a ==DataFrame==.
+A ==DataFrame== returns ==DataSeries== when asked about a given column or row. 
+
+!!! Example first
+
+Let us create a DataSeries from an array. 
+[[[
+series := DataSeries fromArray: #('a' 'b' 'c').
+series at: 2
+>>> 'b'
+]]]
+
+[[[
+series := DataSeries fromArray: #('a' 'b' 'c').
+series keys: #(#k1 #k2 #k3).
+series at: k3
+>>> 'c'
+]]]
+
 !!! Creating DataSeries
 
-DataSeries can be created from an array of values
+DataSeries can be created from an array of values as follows
 
 [[[
-series := DataSeries fromArray: #(a b c).
+series := DataSeries fromArray: #('a' 'b' 'c').
 ]]]
 
-By extending the Collection class DataFrame library provides us with a handy shortcut for converting any collection (e.g. an Array) to DataSeries
+DataFrame extends the ==Collection== class so that we can get an instance of a DataSeries by sending the message ==asDataSeries== to a collection.
 
 [[[
-series := #(a b c) asDataSeries.
+series := #('a' 'b' 'c') asDataSeries.
 ]]]
 
-By default the keys will be initialized with an interval `(1 to: self size)`. The name of a newly created series is considered empty and set by default to `nil`. You can always change the name and keys of your series using these messages
+By default the keys will be initialized with an interval ==(1 to: self size)==. The name of a newly created series is considered empty and set by default to ==nil==.
+ You can always change the name and keys of your series using the messages ==name:== and ==keys:==.
 
 [[[
 series name: 'letters'.
@@ -23,41 +43,60 @@ series keys: #(k1 k2 k3).
 
 !!! Accessing elements of DataSeries
 
-When accessing the elements of a DataSeries, you can think of is as an Array. `at:` message allows you to access elements by their index, with `at:put:` you can modify the given element.
+When accessing the elements of a DataSeries, you can think of is as an Array. The ==at:== message allows you to access elements by their index, with ==at:put:== you can modify the given element.
 
 [[[
-series at: 2.    "b"
+#(a b c) asDataSeries at: 2.
+>>> #b
+]]]
+
+[[[
 series at: 3 put: 'x'.
 ]]] 
 
-Besides the standard Array accessors, DataSeries provides additional operations for accessing elements by their keys
+Besides the standard Array accessors, ==DataSeries== provides additional operations for accessing elements by their keys:
 
 [[[
-series atKey: #k2.    "b"
+series := #(a b c) asDataSeries.
+series keys:  #(k1 k2 k3).
+series atKey: #k2.
+>>> #b
+]]]
+
+[[[
 series atKey: #k3 put: 'x'.
 ]]] 
 
-Messages for enumerating, such as `do:` or `withIndexDo:` work the same as in Array, and the `collect:` message creates a new DataSerie preserving the name and keys of the receiver.
+Messages for enumerating, such as ==do:== or ==withIndexDo:== work the same as in Array, and the ==collect:== message creates a new DataSerie preserving the name and keys of the receiver.
 
 [[[
+series := #(a b c) asDataSeries.
+series name: 'letters'.
+series keys: #(k1 k2 k3).
 newSeries := series collect: [ :each | each, 'x' ].
-newSeries name.         "letters"
-newSeries atKey: 'k1'.  "ax"
+newSeries name.         
+>>> 'letters'
+newSeries atKey: 'k1'.  
+>> 'ax'
 ]]]
 
 !!! Adding new elements to DataSeries
-Since all the elements of DataSeries are expected to have keys, in order to add a new element you must specify a key that should be associated with it
+Since all the elements of ==DataSeries== are expected to have keys, to add a new element you must specify a key that should be associated with it.
+The following example add the element
 
 [[[
 series add: 'x' atKey: #k4.
 ]]] 
 
-In future there will also be an `add:` message that will choose a default key value or even predict the next element of a sequence of keys. For example, if keys are `#(1 2 3 4 5)`, the new element will be associated with key `6`, if the sequence of keys is `#(2 4 6)`, the next key will be `8`. Perhaps, it will even be possible to predict the next key in symbolic sequences, such as `#(a b c d)` or `#(k1 k2 k3)`. Such functionality is not easy to implement, so we leave it for future releases of DataFrame library.
-
-Another way of adding an element to DataSeries is by using the `atKey:put:` message with a non-existing key. Inspired by Pandas, `atKey:put:` modifies an element at a given key if such key exists in a DataSeries, or adds a new element associeted with that key, if it wasn't found.
+Another way of adding an element to a ==DataSeries== is by using the ==atKey:put:== message with a non-existing key. Inspired by Pandas, ==atKey:put:== modifies an element at a given key if such key exists in a DataSeries, or adds a new element associated with that key, if it wasn't found.
 
 [[[
 series atKey: #k4 put: 'x'.
 ]]]
 
-Keep in mind that both `add:atKey:` and `atKey:put:` messages don't create a new series, but modify the existing one. So use them with caution.
+!!! Conclusion
+
+==DataSeries== is a simple kye of dictionary that is used by ==DataFrame== to represent data.
+
+
+
