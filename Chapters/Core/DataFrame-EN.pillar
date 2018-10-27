@@ -5,10 +5,10 @@
 
 !!! Creating DataFrame
 There are four ways of creating a data frame:
-#. From an array of rows or columns
-#. From matrix
-#. From file
-#. Loading a built-in dataset
+# From an array of rows or columns
+# From matrix
+# From file
+# Loading a built-in dataset
 
 !!!! Creating DataFrame from an array of rows or columns
 
@@ -77,7 +77,7 @@ DataFrame fromCSV: 'path/to/your/file.csv'.
 DataFrame fromXLSX: 'path/to/your/file.xlsx'.
 ]]]
 
-Since JSON does not store data as a table, it is not possible to read such file directly into a DataFrame. However, you can parse JSON using [NeoJSON](https://ci.inria.fr/pharo-contribution/job/EnterprisePharoBook/lastSuccessfulBuild/artifact/book-result/NeoJSON/NeoJSON.html) or any other library, construct an array of rows and pass it to ==fromRows:== message, as described in previous sections.
+Since JSON does not store data as a table, it is not possible to read such file directly into a DataFrame. However, you can parse JSON using *https://ci.inria.fr/pharo-contribution/job/EnterprisePharoBook/lastSuccessfulBuild/artifact/book-result/NeoJSON/NeoJSON.html* or any other library, construct an array of rows and pass it to ==fromRows:== message, as described in previous sections.
 
 
 !!!! Loading the built-in datasets
@@ -149,7 +149,7 @@ df rowsFrom: 3 to: 1.
 The result will be a data frame with requested rows and columns in a given order. For example, the last line will give you a data frame "flipped upside-down" (with row indexes going in the descending order).
 
 
-!!! Setting values
+!!! Setting Values
 
 You can change the values of a specific row or column by passing an array or series of the same size to one of the messages: ==row:put:==, ==column:put:==, ==rowAt:put:==, and ==columnAt:put:==. Be careful though, because these messages modify the data frame and may result in the loss of data.
 
@@ -164,7 +164,7 @@ df at: 3 at: 2.
 df at: 3 at: 2 put: true.
 ]]]
 
-!!!! Head & Tail
+!!!! Head and Tail
 When working with bigger datasets, it's often useful to access only the first or the last 5 rows. This can be done using ==head== and ==tail== messages that return another ==DataFrame==. To see how they work let's load the Housing dataset.
 
 [[[
@@ -250,8 +250,8 @@ df := DataFrame loadIris.
 ]]]
 
 There are two things you need to specify to subset your data with ==select:where:== message:
-#. What features (columns) do you want to get
-#. What conditions should the observations (rows) satisfy in order to be selected
+# What features (columns) do you want to get
+# What conditions should the observations (rows) satisfy in order to be selected
 
 First argument of the ==select:where:== message should be an array of column names. They will not affect the selection of rows, but the resulting data frame will contain only these columns. 
 
