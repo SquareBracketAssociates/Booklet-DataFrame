@@ -95,7 +95,7 @@ DataFrame loadTips.
 ]]]
 
 !!! Accessing rows and columns
-Rows and columns of a data frame can be accessed either by their names or their numeric indexes. You can access row =='C'== and the column ='Population'== of a data frame created in the previous sections by writing:
+Rows and columns of a data frame can be accessed either by their names or their numeric indexes. You can access row =='C'== and the column =='Population'== of a data frame created in the previous sections by writing:
 
 [[[
 df row: 'C'.
