@@ -84,9 +84,9 @@ Since JSON does not store data as a table, it is not possible to read such file 
 ==DataFrame== provides several famous datasets for you to play with. They are compact and can be loaded with a simple message. 
 
 At this point there are three datasets that can be loaded in this way 
-* Iris flower dataset *https://en.wikipedia.org/wiki/Iris_flower_data_set*
-* a simplified Boston Housing dataset * https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data*, and 
-* Restaurant tipping dataset *https://vincentarelbundock.github.io/Rdatasets/doc/reshape2/tips.html*.
+-  Iris flower dataset *https://en.wikipedia.org/wiki/Iris_flower_data_set*
+-  a simplified Boston Housing dataset *https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data*, and 
+-  Restaurant tipping dataset *https://vincentarelbundock.github.io/Rdatasets/doc/reshape2/tips.html*.
 
 [[[
 DataFrame loadIris.
