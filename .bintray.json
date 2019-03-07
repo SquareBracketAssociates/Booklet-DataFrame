@@ -18,7 +18,7 @@
 
     "files": [
         {
-            "includePattern": "build/book.spiral.pdf",
+            "includePattern": "_result/pdf/book.pdf",
             "uploadPattern": "dataframe-wip.pdf",
             "matrixParams": { "override": 1 }
         }
