@@ -1,0 +1,55 @@
+!! Introduction
+
+Data frames are the one of the essential parts of the data science toolkit. They are the specialized data structures for tabular data sets that provide us with a simple and powerful API for summarizing, cleaning, and manipulating a wealth of data sources that are currently cumbersome to use.
+
+This booklet serves as the main source of documentation for the DataFrame project in Pharo. I start by describing the complete API of DataFrame and DataSeries data structures, providing examples for each method. Then I show how data frames can be used in practice in a series of hands-on tutorials.
+
+!!! The DataFrame project
+
+DataFrame v1.0 was the first implementation of data frames in Pharo. I have created it in 2017 as my Google Summer of Code project and presented it at the 25th International Smalltalk Joint Conference (ESUG 2017) in Maribor, Slovenia.
+
+Thanks to the questions, requests, and suggestions of numerous people who were using DataFrame, we were able to improve the API, fix some major bugs, make implementations of several methods a lot faster, and add new features. Now with this booklet we are happy to present you the cleaned, improved, and updated DataFrame v2.0${footnote:The source code of DataFrame can be found in the public repository on GitHub: *https://github.com/PolyMathOrg/DataFrame*. DataFrame is free and open source, distributed under the MIT public license.}$.
+
+!!! The PolyMath project
+
+DataFrame was created as part of the PolyMath project - an open-source initiative that brings the power of scientific computing to Pharo. This initiative started with the creation of PolyMath library - a general purpose numerical computation framework in Pharo, similar to numpy and scipy libraries in Python, R, Julia, and SciRuby. PolyMath is based on the initial contents of the book of Didier Besset entitled ''Numerical methods in Smalltalk'' and available at *http://books.pharo.org*. Now, thanks to many different contributors, PolyMath has grown into a fully functional framework for numerical computations.
+
+PolyMath provides two main data structures: PMMatrix and PMVector, and covers topics such as statistical moments, polynomials, interpolations, integration, series, vector algebra, ordinary differential equations, complex numbers, quaternions, KD-trees, random number generation, arbitrary floating-point arithmetics etc.
+
+Besides PolyMath itself, the PolyMath organization on GitHub hosts other projects, including DataFrame described in this booklet, TensorFlow bindings - a Pharo bridge to Google's TensorFlow library.
+
+!!! Installation
+
+In order to use DataFrame, you will need a Pharo image. DataFrame v2.0 was tested on stable versions of Pharo 6.1 and Pharo 7.0, as well as the development version of Pharo 8. Through the continuous integration (CI) and 95\% code coverage by unit tests, we try to make sure that DataFrame is working well on every latest stable and development version of Pharo. So we suggest that you go to *https://pharo.org/download* and get yourself the latest Pharo.
+
+Once you have a Pharo image up and running, go to the Playground (Ctrl\+O\+W on Windows and Linux or Cmd\+O\+W on Mac) and execute the following script to install DataFrame (select it and press Do-it button or Ctrl\+D):
+
+[[[language=smalltalk
+Metacello new
+  baseline: 'DataFrame';
+  repository: 'github://PolyMathOrg/DataFrame/src';
+  load.
+]]]
+
+First thing you should do after installing DataFrame is open the DataFrame-Tests package in Test Runner (Ctrl\+O\+U) or System Browser (Ctrl\+O\+B) and make sure that all tests are passing. If you see some failing tests, please go to the DataFrame repository on GitHub and open an issue describing your problem. We will do our best to help you and fix the issue as soon as possible.
+
+!!! Terminology
+
+In order to remove some ambiguities from our language, we must agree on the terminology used in this booklet.
+
+;data frame, data series
+:general reference to the tabular data structures for data analysis, their rowsm and columns.
+;DataFrame, DataSeries
+:class names, reference to DataFrame package or DataFrame project.
+
+!!! Structure of this booklet
+
+The rest of this booklet is structured in the following way:
+-""Part I. Documentation"" - in this part I document the complete API of DataFrame and DataSeries data structures.
+--""Chapter 1. DataSeries"" - this chapter documents the dictionary-like data structure that is used by DataFrame as a representation of its rows and columns.
+--""Chapter 2. DataFrame"" - here you will find the documentation of the central data structure of the DataFrame package.
+-""Part II. Tutorials"" - a series of short tutorials that will teach you to work with data frames and demonstrate how they can be applied to practical problems.
+
+!!! How to contribute?
+
+DataFrame is an open source project developed in a collaborative public manner. We need your help to make it better. Every contribution counts - should it be a fixed typo in documentation or the implementation of a faster algorithm. Follow this link to find the up-to-date contribution guide: *https://github.com/PolyMathOrg/DataFrame/blob/master/CONTRIBUTING.md*.

@@ -1,16 +1,5 @@
-${inputFile:path=Chapters/Introduction/DataFrameProject-EN.pillar}$
-
-${inputFile:path=Chapters/Core/DataSeries-EN.pillar}$
-${inputFile:path=Chapters/Core/DataFrame-EN.pillar}$
-
-${inputFile:path=Chapters/Examples/EsugTweets-EN.pillar}$
-
-%${inputFile:path=Chapters/Tools/ReadingWriting-EN.pillar}$
-%${inputFile:path=Chapters/Tools/DataVisualization-EN.pillar}$
-%${inputFile:path=Chapters/Tools/Documentation-EN.pillar}$
-
-%! Examples
-
-${inputFile:path=Chapters/Examples/IrisDataset-EN.pillar}$
-${inputFile:path=Chapters/Examples/PCA-EN.pillar}$
-
+${inputFile:path=Chapters/Introduction-EN.pillar}$
+${inputFile:path=Chapters/DataSeries-EN.pillar}$
+${inputFile:path=Chapters/DataFrame-EN.pillar}$
+${inputFile:path=Chapters/EsugTweets-EN.pillar}$
+${inputFile:path=Chapters/IrisDataset-EN.pillar}$

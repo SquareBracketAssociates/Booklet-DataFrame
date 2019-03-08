@@ -1,13 +1,13 @@
 !! DataSeries
 
-A DataSeries is kind of dictionary. It manages data based on keys. A ==DataSeries== is the elementary part of a ==DataFrame==.
-A ==DataFrame== returns ==DataSeries== when asked about a given column or row. 
+A DataSeries behaves like a dictionary. It manages data based on keys. A ==DataSeries== is the elementary part of a ==DataFrame==.
+A ==DataFrame== returns ==DataSeries== when asked about a given column or row.
 
 !!! Example first
 
-Let us create a DataSeries from an array. 
+Let us create a DataSeries from an array.
 [[[
-series := DataSeries fromArray: #('a' 'b' 'c').
+series := DataSeries withValues: #('a' 'b' 'c').
 series at: 2
 >>> 'b'
 ]]]
@@ -52,7 +52,7 @@ When accessing the elements of a DataSeries, you can think of is as an Array. Th
 
 [[[
 series at: 3 put: 'x'.
-]]] 
+]]]
 
 Besides the standard Array accessors, ==DataSeries== provides additional operations for accessing elements by their keys:
 
@@ -65,7 +65,7 @@ series atKey: #k2.
 
 [[[
 series atKey: #k3 put: 'x'.
-]]] 
+]]]
 
 Messages for enumerating, such as ==do:== or ==withIndexDo:== work the same as in Array, and the ==collect:== message creates a new DataSerie preserving the name and keys of the receiver.
 
@@ -74,9 +74,9 @@ series := #(a b c) asDataSeries.
 series name: 'letters'.
 series keys: #(k1 k2 k3).
 newSeries := series collect: [ :each | each, 'x' ].
-newSeries name.         
+newSeries name.
 >>> 'letters'
-newSeries atKey: 'k1'.  
+newSeries atKey: 'k1'.
 >> 'ax'
 ]]]
 
@@ -86,7 +86,7 @@ The following example add the element
 
 [[[
 series add: 'x' atKey: #k4.
-]]] 
+]]]
 
 Another way of adding an element to a ==DataSeries== is by using the ==atKey:put:== message with a non-existing key. Inspired by Pandas, ==atKey:put:== modifies an element at a given key if such key exists in a DataSeries, or adds a new element associated with that key, if it wasn't found.
 
@@ -97,6 +97,3 @@ series atKey: #k4 put: 'x'.
 !!! Conclusion
 
 ==DataSeries== is a simple kye of dictionary that is used by ==DataFrame== to represent data.
-
-
-

@@ -1,4 +1,4 @@
-!! Analysing tweets with #esug18 hashtag
+!! Tutorial: Analysing tweets with #esug18 hashtag
 
 This example is based on a simple demonstration of DataFrame that I have presented at 26th International Smalltalk Joint Conference 2018 in Cagliari, Italy${footnote:http://www.esug.org/}$ together with Serge Stinckwich using the newly announced GTDocumenter${footnote:https://github.com/feenkcom/gtoolkit-documenter}$. In this example we will see how DataFrame can be used for analysing data collected from Twitter.
 
@@ -37,7 +37,7 @@ df columnTypes.
 
 !!! Cleaning the dataset
 
-In the pevious section we have seen several problems with this dataset which could complicate our analysis. One of these problems was the fact that all values loaded from CSV file are considered Strings. 
+In the pevious section we have seen several problems with this dataset which could complicate our analysis. One of these problems was the fact that all values loaded from CSV file are considered Strings.
 
 !!!! Specifying column types
 
@@ -60,14 +60,14 @@ df columnTypes.
 As we have seen during data exploration, mentions in our dataset are stored as arrays represented as strings of the following format: `[Mention1, Mention2]`.
 
 [[[
-arrayParser := [ :aString | 
+arrayParser := [ :aString |
 	(aString
 		trimBoth: [ :char | { $[ . $' . $] } includes: char ])
 		splitOn: ''', ''' ].
 ]]]
 
 [[[
-(arrayParser value: '[''hello'', ''world'']') = (OrderedCollection with: 'hello' with: 'world'). 
+(arrayParser value: '[''hello'', ''world'']') = (OrderedCollection with: 'hello' with: 'world').
 ]]]
 
 
@@ -86,7 +86,7 @@ df selectAllWhere: [ :date | date < '10 Sept 2018' asDate ].
 ]]]
 
 
-For the purpose of this demonstration we can specify a certain time range and ignore all the tweets outside it. 
+For the purpose of this demonstration we can specify a certain time range and ignore all the tweets outside it.
 
 
 [[[
@@ -96,7 +96,7 @@ df := df selectAllWhere: [ :date | (date >= '10 Sept 2018' asDate) and: (date <=
 
 Who has the most likes in total?
 [[[
-(df select: #(author likes) groupBy: #author aggregate: #sum) orderBy: #likes. 
+(df select: #(author likes) groupBy: #author aggregate: #sum) orderBy: #likes.
 ]]]
 
 How many tweets does Stephan Eggermont have?
