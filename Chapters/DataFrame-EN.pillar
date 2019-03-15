@@ -1,295 +1,366 @@
-!! DataFrame
+!! DataFrame by example
 
-==DataFrame== uses ==DataSeries== to return part of their data.
+==DataFrame== is a table of data that behaves as an array of rows. It is common to think of rows as observations and columns as features. Imagine that in order to study the weather in certain area, you are collecting data by measuring the temperature and logging the type of precipitation (rain, snow etc.) every 20 minutes. You may create a table similar to the one in Figure *@weatherDataFrame* (A).
 
+Every column contains values of a certain feature (measurement) and every row contains a single observation that you make at a certain time (in this case rows are indexed by the time when you make your measurement).
 
-!!! Creating DataFrame
-There are four ways of creating a data frame:
-# From an array of rows or columns
-# From matrix
-# From file
-# Loading a built-in dataset
++Top left - data frame, top right - first column as data series, bottom - third row as data series. Data frame has 5 rows and 3 columns. Top row of the table represents column names of data frame, and the yellow column contains its row names. >Images/weather.png|width=90|label=weatherDataFrame+
 
-!!!! Creating DataFrame from an array of rows or columns
+!!! Creating a data frame
 
-The easiest and most straightforward way of creating a ==DataFrame== is by passing all data in an array of arrays to ==fromRows:== or ==fromColumns:== message. Here is an example of initializing a ==DataFrame== with rows:
+In this section I will describe different ways of creating a new data frame. First I will show how to create data frame from Figure *@weatherDataFrame* and how to initialize an empty data frame.
 
-[[[
-df := DataFrame 
-		fromRows: #(
-				('Barcelona' 1.609 true)
-				('Dubai' 2.789 true)
-   			 	('London' 8.788 false)).
-]]]
+!!!! Initializing a data frame with an array of rows
 
-The same data frame can be created from the array of columns
+The most basic way to initialize a data frame is with an array (or any other ordered collection) of rows where each row is a collection of elements.
 
 [[[
-df := DataFrame 
-		fromColumns: #(
-				('Barcelona' 'Dubai' 'London')
-				(1.609 2.789 8.788)
-				(true true false)).
+weather := DataFrame withRows: #(
+  (2.4 true rain)
+	(0.5 true rain)
+  (-1.2 true snow)
+  (-2.3 false -)
+	(3.2 true rain)).
 ]]]
 
-Since the names of rows and columns are not provided, they are initialized with their default values: ==(1 to: self numberOfRows)== and ==(1 to: self numberOfColumns)==. Both ==rowNames== and ==columnNames== can always be changed by passing an array of new names to a corresponding accessor. This array must be of the same size as the number of rows and columns.
+!!!! Initializing a data frame with an array of columns
+
+Alternatively, you can create a data frame by passing it a collection of columns. This can be handy, for example, when we engineer new features: ==DataFrame withColumns: { income . income ** 2 . income log }==. In our case, we create the same weather dataset:
 
 [[[
-df columnNames: #(City Population BeenThere).
-df rowNames: #(A B C).
+weather := DataFrame withColumns: #(
+  (2.4 0.5 -1.2 -2.3 3.2)
+  (true true true false true)
+  (rain rain snow - rain)).
 ]]]
 
-You can convert this data frame to a pretty-printed table that can be copied and pasted into letters, blog posts, and tutorials (such as this one) using the ==asStringTable== message
+!!!! Specifying column and row names
+
+Both expressions in the previous sections produce the same data frame.
+
+| |!1 |!2 |!3
+|!1 |2.4 |true |rain
+|!2 |0.5 |true |rain
+|!3 |-1.2 |true |snow
+|!4 |-2.3 |false |-
+|!5 |3.2 |true |rain
+
+Since the names of rows and columns were not specified, they were initialized with their default values: ==(1 to: self numberOfRows)== and ==(1 to: self numberOfColumns)==. We can provide more meaningful names:
 
 [[[
-df asStringTable
->>>
-'   |  City       Population  BeenThere  
----+----------------------------------
-A  |  Barcelona       1.609       true  
-B  |  Dubai           2.789       true  
-C  |  London          8.788      false'
+weather columnNames: #(temperature precipitation type).
+weather rowNames: (#('01:10' '01:30' '01:50' '02:10' '02:30')
+		collect: #asTime).
 ]]]
 
-!!!! Creating DataFrame from a Matrix
-By its nature ==DataFrame== is similar to a matrix. It works like a table of values, supports matrix accessors, such as ==at:at:== or ==at:at:put:== and in some cases can be treated as a matrix. Some classes provide tabular data in matrix format. For example ==TabularWorksheet== class of [Tabular]() package that is used for reading XLSX files. 
+Notice that the names don't have to be strings or numbers. They can be any objects, and in this case there are instances of Time. Now the data frame looks the same as the one in Figure *@weatherDataFrame* (A).
 
-To initialize a ==DataFrame== from a maxtrix of values, use ==fromMatrix:== method
+| |!temperature |!precipitation |!type
+|!1:10 am |2.4 |true |rain
+|!1:30 am |0.5 |true |rain
+|!1:50 am |-1.2 |true |snow
+|!2:10 am |-2.3 |false |-
+|!2:30 am |3.2 |true |rain
+
+!!!! Compact methods for initializing data frames
+
+==DataFrame== provides some syntactic sugar that allows us to initialize it with contents and (optionally) row and column names in a single line. Here is the complete list of those initializers:
 
 [[[
-matrix := Array2D
-   rows: 3 columns: 3
-   contents:
-      #('Barcelona' 1.609 true
-        'Dubai' 2.789 true
-        'London' 8.788 false).
-         
-df := DataFrame fromMatrix: matrix.
+withRows: arrayOfArrays columnNames: arrayOfColumnNames
+withRows: arrayOfArrays rowNames: arrayOfRowNames
+withRows: arrayOfArrays rowNames: arrayOfRowNames columnNames: arrayOfColumnNames
+withColumns: arrayOfArrays columnNames: arrayOfColumnNames
+withColumns: arrayOfArrays rowNames: arrayOfRowNames
+withColumns: arrayOfArrays rowNames: arrayOfRowNames columnNames: arrayOfColumnNames
 ]]]
 
-Once again, the names of rows and columns are set to their default values.
+Whenever row or column names are not specified, they are initialized with their default values.
 
-!!!! Reading data from file
-In most real-world scenarios the data is located in a file or database. The support for database connections will be added in future releases. Right now ==DataFrame== provides you the methods for loading data from two most commot file formats: CSV and XLSX
+!!!! Creating empty data frames
+
+Sometimes we need to create an empty data frame that will be filled with data later on. The easiest way of doing this is with
 
 [[[
-DataFrame fromCSV: 'path/to/your/file.csv'.
-DataFrame fromXLSX: 'path/to/your/file.xlsx'.
+DataFrame new. "empty data frame with 0 rows and 0 columns"
 ]]]
 
-Since JSON does not store data as a table, it is not possible to read such file directly into a DataFrame. However, you can parse JSON using *https://ci.inria.fr/pharo-contribution/job/EnterprisePharoBook/lastSuccessfulBuild/artifact/book-result/NeoJSON/NeoJSON.html* or any other library, construct an array of rows and pass it to ==fromRows:== message, as described in previous sections.
-
-
-!!!! Loading the built-in datasets
-==DataFrame== provides several famous datasets for you to play with. They are compact and can be loaded with a simple message. 
-
-At this point there are three datasets that can be loaded in this way 
--  Iris flower dataset *https://en.wikipedia.org/wiki/Iris_flower_data_set*
--  a simplified Boston Housing dataset *https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data*, and 
--  Restaurant tipping dataset *https://vincentarelbundock.github.io/Rdatasets/doc/reshape2/tips.html*.
+This will create an empty data frame with 0 columns and 0 rows. You can also create an empty data frame of a given size (specified as a point ==numberOfRows @ numberOfColumns==). All cells of such data frame will be empty (initialized with ==nil==).
 
 [[[
-DataFrame loadIris.
-DataFrame loadHousing.
-DataFrame loadTips.
+DataFrame new: 3@4. "empty data frame with 3 rows and 4 columns"
 ]]]
+
+Similarly to the syntactic sugar described in the previous section, DataFrame class has methods that allow us to create data frames by specifying only their rows, columns, or both. Since we do not provide any data, such data frames with be empty and their sizes will correspond to the provided arrays of rows and columns. For example, if you create an empty data frame with columns ==#(temperature precipitation type)==, its size will be ==0@3==. Here are the methods that can be used to create an empty data frame with names:
+
+[[[
+withColumnNames: arrayOfColumnNames
+withRowNames: arrayOfRowNames
+withRowNames: arrayOfRowNames columnNames: arrayOfColumnNames
+]]]
+
+For example, we can initialize an empty weather data frame:
+
+[[[
+weather := DataFrame
+  withRowNames: (#('01:10' '01:30' '01:50' '02:10' '02:30') collect: #asTime).
+  columnNames: #(temperature precipitation type).
+]]]
+
+| |!temperature |!precipitation |!type
+|!1:10 am |nil |nil |nil
+|!1:30 am |nil |nil |nil
+|!1:50 am |nil |nil |nil
+|!2:10 am |nil |nil |nil
+|!2:30 am |nil |nil |nil
+
+@@note Although it is possible to create an empty data frame and add rows later by pushing them one by one, this is not recommended. DataFrame is not optimized for insertion of new elements. It may be more efficient to first add rows into an OrderedCollection and then initialize a DataFrame with it.
+
+!!! Inspecting a data frame
+
++Top left - data frame, top right - first column as data series, bottom - third row as data series. Data frame has 5 rows and 3 columns. Top row of the table represents column names of data frame, and the yellow column contains its row names. >Images/fastTableWhite.png|width=100|label=fastTable+
+
+!!! Accessing parameters of data frame
+
+Data frames are defined by their contents (table of data), as well as their column and row names. For the simplicity we provide access to some additional parameters such as the dimensions of a data frame. In the following sections, we will discuss how to access row and columns, as well as its individual cells. In this section, I will show you how to get other parameters such as names or sizes.
+
+!!!! Dimensions
+
+Getting the number of rows and columns of a data frame is straightforward:
+
+[[[
+weather numberOfRows. "5"
+weather numberOfColumns. "3"
+]]]
+
+You can also get both dimensions of a data frame as a ==Point==:
+
+[[[
+weather dimensions. "5@3"
+]]]
+
+!!!! Row and column names
+
+Every data frame has names associated to its rows and columns. These names can be used for referencing specific rows or columns (which we will see in the following sections). To get the collection of names for
+
+[[[
+weather rowNames.
+weather columnNames.
+]]]
+
+!!! DataSeries - representation of rows and columns
+
+==DataSeries== is a special class that is used to represent rows and columns of a data frame. It is basically just an ordered dictionary with a name and an advanced API for data analysis. You can add two series together, multiply them by a number, calculate the variance or standard deviation of a series, select elements that satisfy a certain condition, and do many other things that will be described in this section.
+
+You can see the example of two data series in Figure *@weatherDataFrame*. If you extract first column from the weather data frame (accessing rows and columns will be discussed in the next section), you will get a data series as in Figure *@weatherDataFrame* (B). It has a name which corresponds to a column name in data frame and lets us know where this series came from and what is the meaning of its values. The keys of the data series of a column are the row names. Similarly, if you ask the weather data frame for its third row, it will give you a data series as in Figure *@weatherDataFrame* (C). It also has a name which corresponds to a row name and keys which are the same a column names of the data frame.
+
+As a result, although ==DataSeries== acts as an array of values, it is much more interpretable. By extracting a ==temperature== column, we get more than just array of 5 numbers. We also know that these numbers are temperatures and get the time (row name) at which each temperature was measured. In a same way, the row of measurements taken at ==01:50== remembers this time and associates each value to the name of that measurement (column name): ==temperature==, ==precipitation==, and ==type==.
+
+Colors in Figure *@weatherDataFrame* represent data types. Although it is not a restriction of ==DataFrame==, it is common that columns are homogeneous - contain values of the same type, such as real values of temperatures or boolean values denoting whether or not there were any precipitation, while rows can be heterogeneous - contain values of different data types. In our example, the series of a row contains a real numerical value of temperature, a boolean value of precipitation, and a string value of precipitation type.
 
 !!! Accessing rows and columns
-Rows and columns of a data frame can be accessed either by their names or their numeric indexes. You can access row =='C'== and the column =='Population'== of a data frame created in the previous sections by writing:
+
+Rows and columns of a data frame can be accessed either by their names or their numeric indexes.
+
+!!!! Accessing by name
+
+You can get row ==01:50== and the column ==temperature== of the weather data frame by writing:
 
 [[[
-df row: 'C'.
-df column: 'Population'.
+weather row: '01:50' asTime.
+weather column: #temperature.
 ]]]
 
-Alternatively, you can use numeric indexes. Here is how you can ask a data frame for a third row or a second column:
+You can also modify the values stores in that row or column:
 
 [[[
-df rowAt: 3.
-df columnAt: 2.
+weather row: '01:50' asTime put: #(10 true rain).
+weather column: #temperature put: #(1.2 -2.1 3.4 -5.9 -0.4).
 ]]]
 
-The important feature of a ==DataFrame== is that when asked for a specific row or column, it responds with a ==DataSeries== object that preserves the same indexing. This way, if you extract row =='B'== from a data frame, it will still remember that =='Dubai'== is a city with a population of 2.789 million people
+If you reference a row or column by a non-existing name you will get the ==NotFoundError== and if the array you provide is too big or too small, you will get the ==SizeMismatch== error${footnote:You can not add a new column using ==dataFrame column: #newName put newArray==. This is done with ==addColumn:== set of methods that will be described in the following sections}$.
+
+!!!! Accessing by index
+
+Alternatively, rows and columns can be accessed using their numeric indices. You can get the same row and column as in the previous example using
 
 [[[
-df := DataFrame 
-		fromColumns: #(
-				('Barcelona' 'Dubai' 'London')
-				(1.609 2.789 8.788)
-				(true true false)).
-df columnNames: #(City Population BeenThere).
-df rowNames: #(A B C).
-
-(df rowAt: #B) asStringTable
->>>
-            |      B  
-------------+-------
-      City  |  Dubai  
-Population  |  2.789  
- BeenThere  |   true 
+weather rowAt: 3.
+weather columnAt: 1.
 ]]]
 
-
-!!! Accessing 
-
-You can access multiple columns at a same time by providing an array of column names or indexes, or by specifying the numeric range. For this purpose DataFrame provides messages ==rows:==, ==columns:==, ==rowsAt:==, ==columnsAt:==, ==rowsFrom:to:==, and ==columnsFrom:to:==
+Similarly, you can modify them:
 
 [[[
-df columns: #(City BeenThere).
-df rowsAt: #(3 1).
->>>
-
-df columnsFrom: 2 to: 3.
->>> 
-
-df rowsFrom: 3 to: 1.
->>>
+weather rowAt: 3 put: #(10 true rain).
+weather columnAt: 1 put: #(1.2 -2.1 3.4 -5.9 -0.4).
 ]]]
 
-The result will be a data frame with requested rows and columns in a given order. For example, the last line will give you a data frame "flipped upside-down" (with row indexes going in the descending order).
+!!!! Accessing multiple rows and columns
 
-
-!!! Setting Values
-
-You can change the values of a specific row or column by passing an array or series of the same size to one of the messages: ==row:put:==, ==column:put:==, ==rowAt:put:==, and ==columnAt:put:==. Be careful though, because these messages modify the data frame and may result in the loss of data.
+You can access multiple columns at a same time by providing an array of column names or indices, or by specifying the range of indices. Here is an example of how you can get the three rows in the middle of weather data frame:
 
 [[[
-df column: #BeenThere put: #(false true false).
+weather rows: { '01:30' asTime . '01:50' asTime . '02:10' asTime}.
+weather rowsAt: #(2 3 4).
+weather rowsFrom: 2 to: 4.
 ]]]
 
-As it was mentioned above, single cell of a data frame can be accessed with ==at:at:== and ==at:at:put:== messages
+The same can be done to access, for example, last two columns of our data frame:
 
 [[[
-df at: 3 at: 2.
-df at: 3 at: 2 put: true.
+weather columns: #(precipitation type).
+weather columnsAt: #(2 3).
+weather columnsFrom: 2 to: 3.
+]]]
+
+The result will be another data frame with only the requested rows or columns in the order in which you ask for them. This means that you can ask for rows 3, 2, and the 5 or column ==precipitation== followed by the ==temperature==:
+
+[[[
+weather rowsAt: #(3 2 5).
+weather columns: #(precipitation temperature).
+]]]
+
+All the above methods can be used together with ==put:== to modify the given rows or columns:
+
+[[[
+rows: arrayOfRowNames put: arrayOfArrays
+rowsAt: arrayOfNumbers put: arrayOfArrays
+rowsFrom: firstNumber to: secondNumber put: arrayOfArrays
+columns: arrayOfColumnNames put: arrayOfArrays
+columnsAt: arrayOfNumbers put: arrayOfArrays
+columnsFrom: firstNumber to: secondNumber put: arrayOfArrays
 ]]]
 
 !!!! Head and Tail
-When working with bigger datasets, it's often useful to access only the first or the last 5 rows. This can be done using ==head== and ==tail== messages that return another ==DataFrame==. To see how they work let's load the Housing dataset.
+
+To understand the nature of a dataset with 100,000 rows, it helps if we can take a look at its first or last 5 rows. This is called the ""head"" or ""tail"" of a dataset. ==DataFrame== allows you to get the arbitrary number of rows at its beginning or end using ==head: aNumber== and ==tail: aNumber== methods. It also provides simpler methods ==head== and ==tail== which return 5 rows by default.
+
+For example, if we want to get the first 2 rows from our weather data frame:
 
 [[[
-df := DataFrame loadHousing.
+weather head: 2.
 ]]]
 
-This dataset has 489 entries. Printing all these rows to understand how this data looks like is unnecessary. On larger datasets it can also be time consuming. To take a quick look on your data, use ==df head== or ==df tail==
+| |!temperature |!precipitation |!type
+|!1:10 am |2.4 |true |rain
+|!1:30 am |0.5 |true |rain
+
+Or the tail with the last 3 rows:
 
 [[[
-   |     RM  LSTAT  PTRATIO      MDEV  
----+---------------------------------
-1  |  6.575   4.98     15.3  504000.0  
-2  |  6.421   9.14     17.8  453600.0  
-3  |  7.185   4.03     17.8  728700.0  
-4  |  6.998   2.94     18.7  701400.0  
-5  |  7.147   5.33     18.7  760200.0  
+weather tail: 2.
 ]]]
 
-The result will be another data frame. ==head== and ==tail== messages are just shortcuts for ==df rowsFrom: 1 to: 5== and ==df rowsFrom: (df numberOfRows - 5) to: df numberOfRows.==. But what if you want a different number of rows? You can do that using parametrized messages ==head:== and ==tail:== with a given number of rows.
+| |!temperature |!precipitation |!type
+|!1:50 am |-1.2 |true |snow
+|!2:10 am |-2.3 |false |-
+|!2:30 am |3.2 |true |rain
+
+Both ==head== and ==tail== are returned to you as new data frames with only the corresponding rows. DataSeries also implements the ==head==/==tail== methods, which allows you to get the ==head== or ==tail== of a single row or column as a new data series with only the first or last elements
 
 [[[
-df head: 10.
-df tail: 3.
+(weather column: #temperature) head: 2.
 ]]]
 
-You can also look at the head or tail of a specific column, since all these messages are also supported by ==DataSeries==.
+| |!temperature
+|!1:10 am |2.4
+|!1:30 am |0.5
+
+!!! Adding rows and columns
+
+You can add new rows and columns to data frame by providing an array of values a name of the new row or column, and its position as an index:
 
 [[[
-(df column: #LSTAT) head: 2.
+weather
+  addColumn: #(86 79 23 16 90)
+  named: #humidity
+  atPosition: 2.
 ]]]
 
-The result will be another series
+The above statement will modify the weather dataset by adding a humidity column to it right after the temperature column:
+
+| |!temperature |!humidity |!precipitation |!type
+|!1:10 am |2.4 |86 |true |rain
+|!1:30 am |0.5 |79 |true |rain
+|!1:50 am |-1.2 |23 |true |snow
+|!2:10 am |-2.3 |16 |false |-
+|!2:30 am |3.2 |90 |true |rain
+
+You can omit the position using methods ==addRow:named:== or ==addColumn:named:==. By default rows and columns will be added to the end of data frame:
 
 [[[
-   |  LSTAT  
----+-------
-1  |   4.98  
-2  |   9.14
+weather
+  addRow: #(2.0 81 true rain)
+  named: '2:50' asTime.
 ]]]
 
-!!! Adding new rows and columns
+| |!temperature |!humidity |!precipitation |!type
+|!1:10 am |2.4 |86 |true |rain
+|!1:30 am |0.5 |79 |true |rain
+|!1:50 am |-1.2 |23 |true |snow
+|!2:10 am |-2.3 |16 |false |-
+|!2:30 am |3.2 |90 |true |rain
+|!2:50 am |2.0 |81 |true |rain
 
-New rows and columns can be appended to the data frame using messages ==addRow:named:== and ==addColumn:named:==. Like in the case of ==DataSeries==, you must provide a name for these new elements, since it cannot continue the existing sequence of names.
+Alternatively, you can add new rows or columns as data series. In this case you do not need to provide a name because the data series already knows its name.
 
 [[[
-df addRow: #('Lviv' 0.724 true) named: #D.
->>>
+wind := DataSeries
+  withValues: #(39 39 32 24 14 14)
+  name: #wind.
+
+weather
+  addColumn: wind
+  atPosition: 3.
 ]]]
+
+Notice that we did not specify the keys of the data series with wind measurements. It was initialized with default keys. When adding new row or column as a data series, ==DataFrame== does not take keys into account.
+
+| |!temperature |!humidity |!wind |!precipitation |!type
+|!1:10 am |2.4 |86 |39 |true |rain
+|!1:30 am |0.5 |79 |39 |true |rain
+|!1:50 am |-1.2 |23 |32 |true |snow
+|!2:10 am |-2.3 |16 |24 |false |-
+|!2:30 am |3.2 |90 |14 |true |rain
+|!2:50 am |2.0 |81 |14 |true |rain
+
+You can use ==addRow:== or ==addColumn:== without specifying the position, in which case the new row or column will be added to the end.
+
+Just as before, when we were modifying the existing rows and columns, if you try to add new row or column which is too big or too small, ==DataFrame== will signal a ==SizeMismatch== error.
+
+!!! Removing rows and columns
+
+To remove a row or column from a data frame, you have to provide either its name or index. In the previous section we have added two columns to the data frame. Now we remove thew. First column ==humidity== and row ==2:50 am== by their names:
 
 [[[
-df addColumn: #(4 3 4) named: #Rating.
->>>
+weather removeColumn: #humidity.
+weather removeRow: '2:50' asTime.
 ]]]
 
-The same can be done using messages ==row:put:== and ==column:put:== with non-existing keys. DataFrame will append the new key and associate it with a given row or column:
+| |!temperature |!wind |!precipitation |!type
+|!1:10 am |2.4 |39 |true |rain
+|!1:30 am |0.5 |39 |true |rain
+|!1:50 am |-1.2 |32 |true |snow
+|!2:10 am |-2.3 |24 |false |-
+|!2:30 am |3.2 |14 |true |rain
+
+Finally, we remove column ==wind== by its index:
 
 [[[
-df at: #D put: #('Lviv' 0.724 true).
-df at: #Rating put: #(4 3 4).
+weather removeColumnAt: 2.
 ]]]
 
-!!! Transposed DataFrame
+| |!temperature |!precipitation |!type
+|!1:10 am |2.4 |true |rain
+|!1:30 am |0.5 |true |rain
+|!1:50 am |-1.2 |true |snow
+|!2:10 am |-2.3 |false |-
+|!2:30 am |3.2 |true |rain
 
-Sometimes it is useful to transpose a data frame made out of columns and rows into rows and columns. For example, if you want to transpose the data, you can simply write ==df transposed== and it will return you a new data frame which looks like this: 
+If you try to remove the column by a name which does not exist or by index that is out of range, you will get the ==NotFoundError== or ==SubscriptOutOfBounds==.
 
-[[[
-df transposed
->>> 
-            |          A      B       C  
-------------+----------------------------
-      City  |  Barcelona  Dubai  London  
-Population  |      1.609  2.789   8.788  
- BeenThere  |       true   true   false
-]]]
-
-!!! The select:where: queries
-SELECT is the most commonly used SQL statement that allows you to subset your data by applying filters to it using WHERE clause. The query language of ==DataFrame ==is designed to resemble SQL, so if you have some experience with relational databases, you should "feel like home".
-
-The examples in this section will be using Iris dataset.
-
-[[[
-df := DataFrame loadIris.
-]]]
-
-There are two things you need to specify to subset your data with ==select:where:== message:
-# What features (columns) do you want to get
-# What conditions should the observations (rows) satisfy in order to be selected
-
-First argument of the ==select:where:== message should be an array of column names. They will not affect the selection of rows, but the resulting data frame will contain only these columns. 
-
-Second argument should be a block with boolean conditions that will be applied to each row of data frame. Only those rows that make a block return ==true== will be selected.
-
-For example, in Iris dataset you might want to select those flowers that belong to ==#setosa== species and have the width of sepal equal to ==3==. To make queries more readable, DataFrame provides a querying language that allows you to specify the columns which you are using in your conditions as arguments of the where-block, and use these arguments in your conditions. So, for example, a block ==[ :species | species = #setosa ]== passed to ==select:where:== message will be translated to ==[ :row | (row atKey: #species) = #setosa ]== and applied to every row of data frame. This means that all the arguments of the block you pass must correspond to the column names of your data frame. 
-
-@@todo really how to do you extract the :species. I would prefer to have select: #(petal_width petal_length) where: [ :row | ] because parsing block arguments is not a good idea. 
-
-Here is a query that selects ==petal_width== and ==petal_length== columns, and all the rows whose species is ==#setosa== and sepal_width equals 3. 
-
-[[[
-df select: #(petal_width petal_length)
-   where: [ :species :sepal_width |
-      species = #setosa and: [ sepal_width = 3 ] ].
-]]]
-
-If you rather want to select all the columns of a data frame, use the ==selectAllWhere:== message. It works in a same way as ==SELECT * WHERE== in SQL. 
-
-[[[
-df selectAllWhere: [ :species :sepal_width |
-   species = #setosa and: [ sepal_width = 3 ] ].
-]]]
-
-This query will return a data frame will all 5 columns of Iris dataset and 6 rows that satisfy the given condition.
-
-[[[
-    |  sepal_length  sepal_width  petal_length  petal_width  species  
-----+---------------------------------------------------------------
- 2  |           4.9            3           1.4          0.2  setosa   
-13  |           4.8            3           1.4          0.1  setosa   
-14  |           4.3            3           1.1          0.1  setosa   
-26  |             5            3           1.6          0.2  setosa   
-39  |           4.4            3           1.3          0.2  setosa   
-46  |           4.8            3           1.4          0.3  setosa
-]]]
-
-The previous query will return you only the ==petal_width== and ==petal_length== columns of this data frame. Try it yourself!
+!!! Enumerating rows of data frame
 
 !!! Aggregation and Grouping
 
@@ -307,7 +378,7 @@ bill := tips column: #total_bill.
 sex := tips column: #sex.
 
 bill groupBy: sex.
->>> 
+>>>
 ]]]
 
 The result of this query is an instance of ==DataSeriesGrouped==, which splits the bill into two series, mapped to the unique =='Male'== and =='Female'== values of sex series.
@@ -319,7 +390,7 @@ tips group: #total_bill by: #sex.
 ]]]
 
 
-The result of ==groupBy:== operator is rather useless unless combined with 
+The result of ==groupBy:== operator is rather useless unless combined with
 
 [[[
 df select: #(sepal_length species)
@@ -333,15 +404,28 @@ df select: #(sepal_length species)
 The result of this query will be a data frame with a single column:
 
 [[[
-            |  sepal_length  
+            |  sepal_length
 ------------+--------------
-    setosa  |          15.9  
-versicolor  |          18.2  
+    setosa  |          15.9
+versicolor  |          18.2
  virginica  |          17.1
 ]]]
 
+!!! Transposed DataFrame
+
+Sometimes it is useful to transpose a data frame made out of columns and rows into rows and columns. To do that, you can simply write
+
+[[[
+df transposed
+]]]
+
+The result will be a new data frame which looks like this:
+
+| |!1:10 am |!1:30 am |!1:50 am |!2:10 am |!2:30 am
+|!temperature |2.4 |0.5 |-1.2 |-2.3 |3.2
+|!precipitation |true |true |true |false |true
+|!type |rain |rain |snow |- |rain
 
 !!! Conclusion
 
 ==DataFrame== is a powerful abstraction that manipulates and returns ==DataSeries== (named dictionaries).
-
