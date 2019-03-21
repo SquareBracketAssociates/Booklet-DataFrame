@@ -6,6 +6,21 @@ Every column contains values of a certain feature (measurement) and every row co
 
 +Top left - data frame, top right - first column as data series, bottom - third row as data series. Data frame has 5 rows and 3 columns. Top row of the table represents column names of data frame, and the yellow column contains its row names. >Images/weather.png|width=90|label=weatherDataFrame+
 
+!!! Installation
+
+In order to install DataFrame, go to the Playground (Ctrl\+O\+W${footnote:In all keyboard shortcuts mentioned in this booklet the ''Ctrl'' key is for Windows and Linux. On Mac OS, use ''Cmd'' instead.}$) in your fresh Pharo image and execute the following Metacello script (select it and press Do-it button or Ctrl\+D):
+
+[[[language=smalltalk
+Metacello new
+  baseline: 'DataFrame';
+  repository: 'github://PolyMathOrg/DataFrame/src';
+  load.
+]]]
+
+!!! Running the tests
+
+First thing you should do after installing DataFrame is open the DataFrame-Tests package in Test Runner (Ctrl\+O\+U) or System Browser (Ctrl\+O\+B) and make sure that all tests are passing. DataFrame v2.0 is tested with 301 unit tests which provide 90\% code coverage. If you see some failing tests, please go to the DataFrame repository on GitHub and open an issue describing your problem.
+
 !!! Creating a data frame
 
 In this section I will describe different ways of creating a new data frame. First I will show how to create data frame from Figure *@weatherDataFrame* and how to initialize an empty data frame.
@@ -158,6 +173,21 @@ As a result, although ==DataSeries== acts as an array of values, it is much more
 
 Colors in Figure *@weatherDataFrame* represent data types. Although it is not a restriction of ==DataFrame==, it is common that columns are homogeneous - contain values of the same type, such as real values of temperatures or boolean values denoting whether or not there were any precipitation, while rows can be heterogeneous - contain values of different data types. In our example, the series of a row contains a real numerical value of temperature, a boolean value of precipitation, and a string value of precipitation type.
 
+!!!! Transposed DataFrame
+
+Sometimes it is useful to transpose a data frame made out of columns and rows into rows and columns. To do that, you can simply write
+
+[[[
+df transposed
+]]]
+
+The result will be a new data frame which looks like this:
+
+| |!1:10 am |!1:30 am |!1:50 am |!2:10 am |!2:30 am
+|!temperature |2.4 |0.5 |-1.2 |-2.3 |3.2
+|!precipitation |true |true |true |false |true
+|!type |rain |rain |snow |- |rain
+
 !!! Accessing rows and columns
 
 Rows and columns of a data frame can be accessed either by their names or their numeric indexes.
@@ -268,6 +298,7 @@ Both ==head== and ==tail== are returned to you as new data frames with only the 
 |!1:30 am |0.5
 
 !!! Adding rows and columns
+@secAddingRowsAndColumns
 
 You can add new rows and columns to data frame by providing an array of values a name of the new row or column, and its position as an index:
 
@@ -362,69 +393,222 @@ If you try to remove the column by a name which does not exist or by index that 
 
 !!! Enumerating rows of data frame
 
+==DataFrame== can be treated as an array of rows. You can enumerate them in the same way as you enumerate any other sequenceable collection in Smalltalk: ==do:==, ==collect:==, ==select:==, ==reject:==, and ==inject:into:==.
+
+Additionaly, ==DataFrame== provides special methods for enumerating it with row index.
+
+We do not need to enumerate rows with their names.
+
+!!!! do: aBlock
+
+Evaluate ==aBlock== for each row of the receiver data frame.
+
+[[[
+weather do: [ :row |
+  row at: #precipitation put: (
+    (row at: #precipitation)
+      ifTrue: [ 'T' ]
+      ifFalse: [ 'F' ]) ]
+]]]
+
+| |!temperature |!precipitation |!type
+|!1:10 am |2.4 |T |rain
+|!1:30 am |0.5 |T |rain
+|!1:50 am |-1.2 |T |snow
+|!2:10 am |-2.3 |F |-
+|!2:30 am |3.2 |T |rain
+
+!!!! select: aBlock
+
+Evaluate ==aBlock== for each row of the receiver data frame. Collect into a new data frame only those rows for which ==aBlock== evaluates to ==true==. Answer the new data frame.
+
+[[[
+weather select: [ :row |
+  (row at: #temperature) < 0 ]
+]]]
+
+| |!temperature |!precipitation |!type
+|!1:50 am |-1.2 |true |snow
+|!2:10 am |-2.3 |false |-
+
+!!!! reject: aBlock
+
+Evaluate ==aBlock== for each row of the receiver data frame. Collect into a new data frame only those rows for which ==aBlock== evaluates to ==false==. Answer the new data frame.
+
+[[[
+weather reject: [ :row |
+  (row at: #temperature) < 0 ]
+]]]
+
+| |!temperature |!precipitation |!type
+|!1:10 am |2.4 |true |rain
+|!1:30 am |0.5 |true |rain
+|!2:30 am |3.2 |true |rain
+
+!!!! collect: aBlock
+
+Evaluate ==aBlock== for each row of the receiver data frame. Collect into a new data frame the rows that were answered by ==aBlock==. Therefore, ==aBlock== is expected to return a data series of certain size. This size can be different than the number of columns in the original data frame, but the same for every answered row. Keys of the answered data series will be set as column names of the new data frame. For example, we can collect rows of weather data frame into a new data frame which has temperature values in Fahrenheit instead of Celsius and does not have the precipitation column.
+
+[[[
+weather collect: [ :row |
+  row at: #temperature transform: [ :x | x * 9/5 + 32 ].
+  row removeAt: #precipitation.
+  row ].
+]]]
+
+| |!temperature |!type
+|!1:10 am |36.32 |rain
+|!1:30 am |32.9 |rain
+|!1:50 am |29.84 |snow
+|!2:10 am |27.86 |-
+|!2:30 am |37.76 |rain
+
+!!!! detect: aBlock
+
+Evaluate ==aBlock== for each row of the receiver data frame. Answer the first row for which ==aBlock== evaluates to ==true==. If none evaluates to ==true==, report an error. For example, we can detect the first row with a temperature below zero:
+
+[[[
+weather detect: [ :row |
+  (row at: #temperature) < 0 ].
+]]]
+
+| |!1:50 am
+|!temperature |-1.2
+|!precipitation |true
+|!type |snow
+
+!!!! detect: aBlock ifNone: exceptionBlock
+
+Evaluate ==aBlock== for each row of the receiver data frame. Answer the first row for which ==aBlock== evaluates to ==true==. If none evaluates to ==true==, evaluate ==exceptionBlock== which must be a block requiring no arguments. For example, since weather dataset does not contain any observations (rows) with temperatures lower than -20, the following expression will evaluate to the ''not found'' string:
+
+[[[
+weather
+  detect: [ :row | (row at: #temperature) < -20 ]
+  ifNone: [ 'not found' ].
+]]]
+
+!!!! inject: thisValue into: binaryBlock
+
+Evaluate ==binaryBlock== once for each row in the receiver data frame. The block has two arguments: the second one is the row from the receiver; the first one is the is the value of the previous evaluation of the block, starting the argument ==thisValue==. Answer the final value of a block.
+
+To demonstrate the good application of ==inject:into:==, we create a numeric data frame of temperatures with two columns, representing the temperature values in Celsius and Fahrenheit.
+
+[[[
+temperature := DataFrame
+	withColumns: {
+		(weather column: #temperature) .
+		(weather column: #temperature) * 9/5 + 32 }
+	rowNames: weather rowNames
+	columnNames: #(celsius fahrenheit).
+]]]
+
+| |!celsius |!fahrenheit
+|!1:10 am |2.4 |36.32
+|!1:30 am |0.5 |32.9
+|!1:50 am |-1.2 |29.84
+|!2:10 am |-2.3 |27.86
+|!2:30 am |3.2 |37.76
+
+Let's find the sum of all these temperatures:
+
+[[[
+temperature
+	inject: 0
+	into: [ :sum :row | sum + row ]
+]]]
+
+| |!(no name)
+|!celsius |2.6
+|!fahrenheit |164.68
+
 !!! Aggregation and Grouping
 
-All code in this section will be based on Tipping dataset
+Aggregation and grouping is among the most used operations in data analysis workflow. It allows us to first group rows of a data frame by a value of some column and then aggregate those values into a single value with some function or block, for example, ==average==, ==sum==, etc.
+
+In this section we will continue working with weather data frame, but to make it more interesting, we will add one more column to it. Weather data frame has column ==temperature== which contains temperature values on Celsius scale. Let's rename this column to ==celsius== and create another column called ==fahrenheit==. Let's also add the ==humidity== column that we used in Section *@secAddingRowsAndColumns*
 
 [[[
-df := DataFrame loadTips.
+weather renameColumn: #temperature to: #celsius.
+
+weather
+	addColumn: (weather column: #celsius) * 9/5 + 32
+	named: #fahrenheit
+	atPosition: 2.
+
+weather
+  addColumn: #(86 79 23 16 90)
+  named: #humidity.
 ]]]
 
-The simplest example of applying a ==groupBy:== operator is grouping the values of a series by the values of another one of the same size.
+| |!celsius |!fahrenheit |!precipitation |!type |!humidity
+|!1:10 am |2.4 |36.32 |true |rain |86
+|!1:30 am |0.5 |32.9 |true |rain |79
+|!1:50 am |-1.2 |29.84 |true |snow |23
+|!2:10 am |-2.3 |27.86 |false |- |16
+|!2:30 am |3.2 |37.76 |true |rain |90
 
+First question that we will ask to this data is ''"What is the average temperature on the Celsius scale when it rains, snows, or when there is no precipitation?"''. To answer this question, we group the values of ==celsius== column by the ==type== column and find the average value of each group.
 
 [[[
-bill := tips column: #total_bill.
-sex := tips column: #sex.
-
-bill groupBy: sex.
->>>
+weather
+	group: #celsius
+	by: #type
+	aggregateUsing: #average
+  as: #averageCelsius
 ]]]
 
-The result of this query is an instance of ==DataSeriesGrouped==, which splits the bill into two series, mapped to the unique =='Male'== and =='Female'== values of sex series.
+This gives us a data series of average temperatures by precipitation type called ==averageCelsius==:
 
-Since most of the time the series that are grouped are both columns of a same data frame, there is a handy shortcut
+| |!averageCelsius
+|!- |-2.3
+|!rain |2.03
+|!snow |-1.2
+
+You can omit the ==as: #averageCelsius== part of that message, in which case the answered data series will have the same name as the column that was aggregated: ==celsius==.
+
+Values of data series are grouped into a data series of groups where each group is also a data series. Aggregation function or block is then applied to each one of these groups. Which means that aggregation fuction can be any selector understood by ==DataSeries==. And the result of aggregation and grouping expression will be a data series of answers from your aggregation function or block (which can be scalar values or collections).
+
+We may want to ask other questions and see the result as a single data frame. Let's look at the total number of rows in each group, maximal and average Celsius temperature, minimal Fahrenheit temperature, and average humidity.
 
 [[[
-tips group: #total_bill by: #sex.
+weather
+	groupBy: #type
+	aggregate: {
+		#celsius using: #size as: #count .
+		#celsius using: #max as: #maxCelsius .
+		#celsius using: #average as: #avgCelsius .
+		#fahrenheit using: #min as: #minFahrenheit .
+		#humidity using: #average as: #maxHumidity }
 ]]]
 
+Notice that ==count== column is constructed by aggregating groups of ==celsius== temperatures with ==#size== message. In fact, any column can be used in the place of ==celsius==.
 
-The result of ==groupBy:== operator is rather useless unless combined with
+| |!count |!maxCelsius |!avgCelsius |!minFahrenheit |!maxHumidity
+|!- |1 |-2.3 |-2.3 |27.86 |16
+|!rain |3 |3.2 |2.03 |32.9 |85
+|!snow |1 |-1.2 |-1.2 |29.84 |23
+
+!!! Reading from and writing to files
+
+In practice, data frames are useful when you can load some data from an external source into a data frame, modify and analyse it, then save result. External source can be a CSV or Excel file, a database connection, or any other source of data In this section I will describe the ==DataFrame-IO== package of the ==DataFrame project== which allows you to load and save data frames.
+
+==DataFrame-IO== provides two abstract classes: ==DataFrameReader== and ==DataFrameWriter==. Each of them has only one abstract method: ==DataFrameReader >> readFrom: aLocation== (expected to return a data frame) and ==DataFrameWriter >> write: aDataFrame to: aLocation==. In order to add support for some external data source, you need to override those methods in your subclasses, providing the actual algorithm for reading and writing data. ==DataFrame== has two methods that allow you to read or write it using your reader or writer:
 
 [[[
-df select: #(sepal_length species)
-   where: [ :petal_length :petal_width |
-      (petal_length < 4.9 and: petal_length > 1.6) and:
-      (petal_width < 0.4 or: petal_width > 1.5) ]
-   groupBy: #species
-   aggregate: #sum.
+DataFrame class >> readFrom: aLocation using: aDataFrameReader
+  "Read data frame from a given location using a given DataFrameReader. Location can be a file reference, a database connection, or something else (depending on the implementation of the reader)"
+  ^ aDataFrameReader readFrom: aLocation
+
+DataFrame >> writeTo: aLocation using: aDataFrameWriter
+  "Write data frame to a given location using a given DataFrameWriter. Location can be a file reference, a database connection, or something else (depending on the implementation of the writer)"
+  aDataFrameWriter write: self to: aLocation
 ]]]
 
-The result of this query will be a data frame with a single column:
+!!!! CSV support
 
-[[[
-            |  sepal_length
-------------+--------------
-    setosa  |          15.9
-versicolor  |          18.2
- virginica  |          17.1
-]]]
+""CSV"" (comma-separated values) is the file format that is most commonly used by data scientists to save and share tabular data. It is a simple text file in which each row is written on the new line and values of a row are separated by commas. You can use other character as separator instead of comma, for example, one common choice is tabulation.
 
-!!! Transposed DataFrame
-
-Sometimes it is useful to transpose a data frame made out of columns and rows into rows and columns. To do that, you can simply write
-
-[[[
-df transposed
-]]]
-
-The result will be a new data frame which looks like this:
-
-| |!1:10 am |!1:30 am |!1:50 am |!2:10 am |!2:30 am
-|!temperature |2.4 |0.5 |-1.2 |-2.3 |3.2
-|!precipitation |true |true |true |false |true
-|!type |rain |rain |snow |- |rain
+==DataFrame-IO== package comes with two subclasses of ==DataFrameReader== and ==DataFrameWriter==: ==DataFrameCsvReader== and ==DataFrameCsvWriter==. They override ==readFrom:== and ==write:to:== methods using ==NeoCSV== ${footnote:https://github.com/svenvc/NeoCSV}$ and allow you to make optional configurations, such as specifying the separator character (comma by default) or line end convention (either ==#cr==, ==#lf==, or ==#crlf==, by default we choose the one used by your OS). By default, ==DataFrameCsvReader== will read all columns of the CSV file as data frame columns and assign the default names to rows - numbers from 1 to ==numberOfRows==. However, you can configure it to read first column as row names by sending ==true== to the ==DataFrameCsvReader >> includeRowNames:==. In this case ==aLocation== parameter of ==readFrom:== and ==write:to:== methods is expected to be a ==FileReference==.
 
 !!! Conclusion
 
