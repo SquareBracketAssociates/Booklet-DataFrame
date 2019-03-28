@@ -24,12 +24,11 @@ install:
 script:
   - ./pillar/build/pillar build pdf
 
-deploy:
-- provider: bintray
-  file: .bintray.json
-  on:
-    repo: SquareBracketAssociates/Booklet-DataFrame
-  skip_cleanup: true
-  user: ducasse
-  key:
-    secure: qk7iLGBIHfkza9hkNyJgxe2IsvIWtNzlS/JY8KmmJVlxJ2FHr/vG3/o1r0+KuG4vH3SrAaXgWdt8SC8aBwF4Mz0n7L52uK37R0ABlHLOVBrxd37634ir0NCgLTdYW0MXa2AFq7cG4N3dNMq5rTQnDHgPQVXZEe3iHpqsDRx2Kq4bq/Uyy5bpPetc2aQ/7ataz0ERFpMxs2baJht50yppdc41a3norRfzkIOVfZCSM4yX6a73fxWHoV0FA/KUuqTd1+d7b+Zp7u6dboZat0wSG+vMy7rbghNcWlfpiUAkKRRgMkRYyPFwqeMDoDK0dz+0ERkUjXrYOHFyx21i0+MyTPtLZqWdiZb0XLKnflX1/BUPhgmWsX1ZHAtmvhXjsbeDwbREayDEfOWukBLYLVt7l5XUVaA38/HqZVx6iLFjEMHgaY3ceRDTbNMpTkuXEj1uGUq25wbtazuY+2DFWiRhMCdFyFHmcOHk4hZhFRJ8+vAOyV8B2wqamZbbFpN9phA7cYzxmyk8+UuyJzNNhszfMFz0gdYTwTpQfmz88/9TZrJOGvZbiEbQIQ9+SPz5bXyTo+KgnPVlYgoh8zilJbXOy2NHRoHEmaEr5KgF8ooi9voEMzhQ7Mft0MPSe6eLcP5oGhN9mT08WySIJhKNpSazAh+LlI4y3nf4Epl+i5DPyHQ=
+after_success:
+  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - mv _result/pdf/book.pdf DataFrame-wip.pdf
+  - bash upload.sh DataFrame-wip.pdf
+
+branches:
+  except:
+    - /^(?i:continuous)$/
