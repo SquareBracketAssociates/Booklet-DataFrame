@@ -2,7 +2,7 @@
 
 Data frames are the one of the essential parts of the data science toolkit. They are the specialized data structures for tabular data sets that provide us with a simple and powerful API for summarizing, cleaning, and manipulating a wealth of data sources that are currently cumbersome to use.
 
-A data frame is like a database inside a variable. It is an object which can be created, modified, copied, serialized, debugged, inspected, and garbage collected. It allows you to communicate with your data quickly and effortlessly, using just a few lines of code. DataFrame project is similar to ''pandas''${footnote:*https://pandas.pydata.org/*}$ library in Python or built-in ''data.frame''${footnote:*https://www.rdocumentation.org/packages/base/versions/3.5.3/topics/data.frame*}$ class in R.
+A data frame is like a database inside a variable. It is an object which can be created, modified, copied, serialized, debugged, inspected, and garbage collected. It allows you to communicate with your data quickly and effortlessly, using just a few lines of code. DataFrame project is similar to ''pandas''${footnote:note=https://pandas.pydata.org/}$ library in Python or built-in ''data.frame''${footnote:note=https://www.rdocumentation.org/packages/base/versions/3.5.3/topics/data.frame}$ class in R.
 
 This booklet serves as the main source of documentation for the DataFrame project in Pharo. I start by describing the complete API of DataFrame and DataSeries data structures, providing examples for each method. Then I show how data frames can be used in practice in a series of hands-on tutorials.
 
@@ -10,7 +10,7 @@ This booklet serves as the main source of documentation for the DataFrame projec
 
 DataFrame v1.0 was the first implementation of data frames in Pharo. I have created it in 2017 as my Google Summer of Code project and presented it at the 25th International Smalltalk Joint Conference (ESUG 2017) in Maribor, Slovenia.
 
-Thanks to the questions, requests, and suggestions of numerous people who were using DataFrame, I was able to improve the API, fix some major bugs, make implementations of several methods a lot faster, and add new features. Now with this booklet I am happy to present you the cleaned, improved, and updated DataFrame v2.0${footnote:The source code of DataFrame can be found in the public repository on GitHub: *https://github.com/PolyMathOrg/DataFrame*}$.
+Thanks to the questions, requests, and suggestions of numerous people who were using DataFrame, I was able to improve the API, fix some major bugs, make implementations of several methods a lot faster, and add new features. Now with this booklet I am happy to present you the cleaned, improved, and updated DataFrame v2.0${footnote:note=The source code of DataFrame can be found in the public repository on GitHub: https://github.com/PolyMathOrg/DataFrame}$.
 
 !!!Who is this booklet for?
 
@@ -26,7 +26,7 @@ Pharo is a dynamic, purely object-oriented programming language (everything is a
 
 Pharo's goal is to deliver a clean, innovative, free and open-source immersive environment. By providing a stable and small core system, excellent development tools, and maintained releases, Pharo is an attractive platform to build and deploy mission-critical applications.
 
-Pharo fosters a healthy ecosystem developed from both private and commercial contributors who advance and maintain the core system and its external packages. More information about Pharo is available at http://www.pharo.org/. If you are new to Pharo, I suggest you to take Pharo MOOC${footnote:*https://mooc.pharo.org/*}$ or read Pharo by Example${footnote:*https://books.pharo.org/updated-pharo-by-example/*}$ book.
+Pharo fosters a healthy ecosystem developed from both private and commercial contributors who advance and maintain the core system and its external packages. More information about Pharo is available at http://www.pharo.org/. If you are new to Pharo, I suggest you to take Pharo MOOC${footnote:note=https://mooc.pharo.org/}$ or read Pharo by Example${footnote:note=https://books.pharo.org/updated-pharo-by-example/}$ book.
 
 DataFrame v2.0 was tested on stable versions of Pharo 6.1 and Pharo 7.0, as well as the development version of Pharo 8. Through the continuous integration (CI) and 90\% code coverage by unit tests, we try to make sure that DataFrame is working well on every latest stable and development version of Pharo on all major operating systems: Linux, Mac OS, and Windows, as well as both 32-bit and 64-bit architectures.
 
@@ -34,13 +34,13 @@ So before moving on to the next chapter, go to *https://pharo.org/download* and 
 
 !!! The PolyMath project
 
-DataFrame was originally created as part of the PolyMath project - an open-source initiative that brings the power of scientific computing to Pharo. It started with the creation of the ''PolyMath''${footnote:https://github.com/PolyMathOrg/PolyMath}$ library - a general purpose numerical computation framework in Pharo, similar to ''numpy''${footnote:*http://www.numpy.org/*}$ and ''scipy''${footnote:*https://www.scipy.org/scipylib/index.html*}$ libraries in Python, as well as ''SciRuby''${footnote:*http://sciruby.com/*}$ library and the built-in functionality R and Julia.
+DataFrame was originally created as part of the PolyMath project - an open-source initiative that brings the power of scientific computing to Pharo. It started with the creation of the ''PolyMath''${footnote:note=https://github.com/PolyMathOrg/PolyMath}$ library - a general purpose numerical computation framework in Pharo, similar to ''numpy''${footnote:note=http://www.numpy.org/}$ and ''scipy''${footnote:note=https://www.scipy.org/scipylib/index.html}$ libraries in Python, as well as ''SciRuby''${footnote:note=http://sciruby.com/}$ library and the built-in functionality R and Julia.
 
 PolyMath provides two main data structures: ==PMMatrix== and ==PMVector==, and covers topics such as statistical moments, polynomials, interpolations, integration, series (not to be confused with data series that will be discussed in the following chapters), vector algebra, ordinary differential equations, complex numbers, quaternions, KD-trees, random number generation, arbitrary floating-point arithmetics, etc.
 
-The original version of PolyMath was described in the book ''Numerical methods in Smalltalk'' by Didier Besset${footnote:Available at *http://books.pharo.org*}$. Since then, PolyMath has changed a lot, and now, thanks to many different contributors, it has grown into a fully functional framework for numerical computations.
+The original version of PolyMath was described in the book ''Numerical methods in Smalltalk'' by Didier Besset${footnote:note=Available at http://books.pharo.org}$. Since then, PolyMath has changed a lot, and now, thanks to many different contributors, it has grown into a fully functional framework for numerical computations.
 
-Besides PolyMath itself, the PolyMath organization on GitHub hosts other projects, including DataFrame, described in this booklet, and ''libtensorflow-pharo-bindings''${footnote:*https://github.com/PolyMathOrg/libtensorflow-pharo-bindings*}$ -- a Pharo bridge to Google's ''TensorFlow''${footnote:*https://www.tensorflow.org/*}$ library.
+Besides PolyMath itself, the PolyMath organization on GitHub hosts other projects, including DataFrame, described in this booklet, and ''libtensorflow-pharo-bindings''${footnote:note=https://github.com/PolyMathOrg/libtensorflow-pharo-bindings}$ -- a Pharo bridge to Google's ''TensorFlow''${footnote:note=https://www.tensorflow.org/}$ library.
 
 !!! Terminology
 
@@ -54,6 +54,8 @@ At this point, you have probably noticed that, depending on the context, the phr
 :\-- class name of a data structure that models a data frame, reference to DataFrame package or DataFrame project.
 ;DataSeries
 :\-- class name of a data structure used to model a data series.
+
+I would also like to remind that ''"series"'' is both a singular and a plural form. We say ''"a single data series was created"'' and ''"two data series were removed"''.
 
 !!! Structure of this booklet
 
