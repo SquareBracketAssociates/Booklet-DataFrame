@@ -47,9 +47,9 @@ Besides PolyMath itself, the PolyMath organization on GitHub hosts other project
 At this point, you have probably noticed that, depending on the context, the phrase "data frame" can refer to different things. It can be a data structure, a class, a package, or this whole project. In order to remove these ambiguities from our language, I propose the following terminology and stick to it in this booklet:
 
 ;data frame
-:\-- general reference to the tabular data structure for data analysis, their rows and columns.
+:\-- general reference to the tabular data structure (collection) designed for data analysis.
 ;data series
-:\-- general reference to a row or column of a data frame, represented with ==DataSeries== - a dedicated data structure described in the next chapter.
+:\-- general reference to a dictionary-like data structure that is used to represent rows and columns of a data frame.
 ;DataFrame
 :\-- class name of a data structure that models a data frame, reference to DataFrame package or DataFrame project.
 ;DataSeries
@@ -59,13 +59,10 @@ I would also like to remind that ''"series"'' is both a singular and a plural fo
 
 !!! Structure of this booklet
 
-@@todo Needs to be updated
-
 The rest of this booklet is structured in the following way:
--""Part I. Documentation"" - in this part I document the complete API of DataFrame and DataSeries data structures.
---""Chapter 1. DataSeries"" - this chapter documents the dictionary-like data structure that is used by DataFrame as a representation of its rows and columns.
---""Chapter 2. DataFrame"" - here you will find the documentation of the central data structure of the DataFrame package.
--""Part II. Tutorials"" - a series of short tutorials that will teach you to work with data frames and demonstrate how they can be applied to practical problems.
+
+-""Chapter 1. DataFrame by example"" - this chapter will guide you through the complete API of DataFrame project using simple examples.
+-""Chapter 2. Tutorials"" - a series of short tutorials that will teach you to work with data frames and demonstrate how they can be applied to practical problems.
 
 !!! How to contribute?
 

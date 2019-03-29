@@ -3,6 +3,7 @@
 In this chapter, I will guide you through the complete functionality of the DataFrame project by showing examples of how each of those features can be used. This is a documentation of DataFrame written in a form of storytelling with data.
 
 !!! Weather dataset
+@weatherDataset
 
 For the demonstrational purposes, I have designed a simple dataset of meteorological observations. Imagine that in order to study the weather in certain area, you are collecting data by measuring the temperature and logging the type of precipitation (rain, snow etc.) every 20 minutes. The initial table contains only 5 observations (rows) and 3 features (columns): ==temperature==, ==precipitation==, and ==type==. You can see this table in the top left of Figure *@weatherDataFrame*. As we progress through this chapter, we will be modifying, adding, and removing rows and columns of this dataset. Two additional columns that we will add are ==humidity== and ==wind==.
 
@@ -32,7 +33,7 @@ Each row or column can be extracted as a ==DataSeries== object - a dictionary of
 
 You can see the example of two data series in the top right and bottom of Figure *@weatherDataFrame*. Column ==temperature== is a homogeneous ==Float== data series and the row ==01:50== is a heterogeneous series containing different types of values.
 
-In the following section I will show you how to create a weather data frame and analyse it in Pharo. But first you need to install DataFrame v2.0 and make sure that it is passing all the tests.
+In the following section I will show you how to create a weather data frame and analyse it in Pharo. But first you need to install DataFrame v2.0 and make sure that all its tests are passing.
 
 !!! Installation
 
@@ -49,10 +50,10 @@ In all keyboard shortcuts mentioned in this booklet the ''Ctrl'' key is for Wind
 
 !!!! Running the tests
 
-First thing you should do after installing DataFrame is open the DataFrame-Tests package in Test Runner (Ctrl\+O\+U) or System Browser (Ctrl\+O\+B) and make sure that all tests are passing. DataFrame v2.0 is tested with 301 unit tests which provide 90\% code coverage. If you see some failing tests, please go to the DataFrame repository on GitHub and open an issue describing your problem.
+First thing you should do after installing DataFrame is open the DataFrame-Tests package in Test Runner (Ctrl\+O\+U) or System Browser (Ctrl\+O\+B) and make sure that all tests are passing. DataFrame v2.0 is tested with 301 unit tests which provide 90\% code coverage. If you see some failing tests, please go to the DataFrame repository on GitHub and open a related issue.
 
 !!! Creating a data series
-@creatingDataSeries
+@secCreatingDataSeries
 
 ==DataSeries== behaves like an ==OrderedDictionary==. You can create it by providing keys, values, and a name:
 
@@ -124,11 +125,68 @@ That last expression has a shorter form which produces the same result:
 
 ==DataSeries== is an extended ==OrderedDictionary==. It combines the API of both ==Dictionary== and ==SequenceableCollection==, and adds some additional functionality that can be useful for data analysis. This simple data structure does not require a long introduction but it is still worth to demonstrate how it can be used. In this section, I briefly cover the public API of a ==DataSeries== class and describe the additional methods that are not present in other Pharo collections.
 
+!!!! Accessing and modifying values
+
+In this aspect, ==DataSeries== acts like an ==OrderedDictionary==. You can access an element at a certain key using ==at: aKey== message, you can modify this element with ==at: aKey put: newValue==. To remove an element, use ==removeAt: aKey==. If ==aKey== is not present in the data series, a new element will be created and added to the end. Alternatively, you can use methods such as ==at: ifAbsent:==, ==at: ifAbsentPut:==, etc. to provide custom block that will be evaluated when ==aKey== is not found.
+
+You can also access elements by their index rather than key with methods ==atIndex:==, ==atIndex: put:==, and ==removeAtIndex:==. ==DataSeries== provides additional set of ==at: transform:== modifying accessors that will be introduced in Section *@secAtTransform*.
+
+Here is the list of some accessors provided by ==DataSeries==. This list is incomplete. Many other accessors are inherited from ==OrderedCollection== class. They can come in handy but we do not discuss them in this booklet:
+
+[[[
+DataSeries >> at:
+DataSeries >> at: ifAbsent:
+DataSeries >> at: put:
+DataSeries >> removeAt:
+DataSeries >> atIndex:
+DataSeries >> atIndex: put:
+DataSeries >> removeAtIndex:
+DataSeries >> at: transform:
+DataSeries >> at: transform: ifAbsent:
+DataSeries >> atKey: transform:
+]]]
+
+!!!! at: transform:
+@secAtTransform
+
+Consider a situation when you want to convert a certain value of the temperature data series from Celsius to Fahrenheit. Having to specify key twice we make the whole expression long and hard to comprehend:
+
+[[[
+temperature at: '01:30' asTime put: (temperature at: '01:30' asTime)  * 9/5 + 32.
+]]]
+
+And since operations on data series (rows and columns) are the building block of most data frame queries, we want them to be as short and readable as possible. To simplify complex queries, ==DataSeries== provides a set of methods that allow you to transform an element at certain position using a block:
+
+[[[
+DataSeries >> at: transform:
+DataSeries >> at: transform: ifAbsent:
+DataSeries >> atIndex: transform:
+]]]
+
+We can now rewrite the above expression as
+
+[[[
+temperature at: '01:30' asTime transform: [ :x | x * 9/5 + 32 ].
+]]]
+
+!!!! Enumerating values of data series
+
+As a combination of ==Dictionary== and ==SequenceableCollection==, ==DataSeries== understands the following methods for enumerating its values:
+
+|!Value |!Value and key |!Value and index
+|do: |withKeyDo: |withIndexDo:
+|select: |withKeySelect: |withIndexSelect:
+|reject: |withKeyReject: |withIndexReject:
+|collect: |withKeyCollect: |withIndexCollect:
+|detect: |withKeyDetect: |withIndexDetect:
+|detect: ifNone: |withKeyDetect: ifNone: |withIndexDetect: ifNone:
+|inject: into: |- |-
+
 !!!! Arithmetical and statistical operations
 
 Similarly to other collections in Pharo, ==DataSeries== responds to basic arithmetical operations, such as ==+, -, *, /==. You can apply these operations on any of the following combinations: series-scalar, scalar-series, or series-series. When an operation is applied to a scalar and a series, it is performed on every element of a series with the given scalar. For example, if you add one to a data series, it will be added to every element. When the operation is applied to a pair of two data series, it will be performed in the elementwise manner. So, for example, if you want to multiply two data series ==a== and ==b==, you will get a third series where first element is the product of the first elements of ==a== and ==b==, second element is the product of second elements, etc. In this case, both data series must be of the same size.
 
-In addition to statistical methods understood by all collections, such as ==average==, ==min==, or ==max==, ==DataSeries== class provides methods more advanced methods that are commonly used when analysing quantitatice columns. Here is the complete list of statistical methods understood by ==DataSeries==:
+In addition to statistical methods understood by all collections, such as ==average==, ==min==, or ==max==, ==DataSeries== class provides methods more advanced methods that are commonly used when analysing quantitative columns. Here is the complete list of statistical methods understood by ==DataSeries==:
 
 [[[
 DataSeries >> min
@@ -153,7 +211,7 @@ If any of these methods is applied to a non-numerical data series, it will signa
 
 You can get a quick summary of the distribution of a numerical data series as a collection of its minimal and maximal values, first and third quartiles, average value, and a median.
 
-Let's see how it works for a temperature series, created in *@creatingDataSeries*:
+Let's see how it works for a temperature series, created in *@secCreatingDataSeries*:
 
 [[[
 temperature summary.
@@ -206,35 +264,13 @@ We get a data frame of counts and proportions:
 |!false |4 |(4/5)
 |!true |1 |(1/5)
 
-!!!! at: transform:
-
-Consider a situation when you want to convert a certain value of the temperature data series from Celsius to Fahrenheit. Having to specify key twice we make the whole expression long and hard to comprehend:
-
-[[[
-temperature at: '01:30' asTime put: (temperature at: '01:30' asTime)  * 9/5 + 32.
-]]]
-
-And since operations on data series (rows and columns) are the building block of most data frame queries, we want them to be as short and readable as possible. To simplify complex queries, ==DataSeries== provides a set of methods that allow you to transform an element at certain position using a block:
-
-[[[
-DataSeries >> at: transform:
-DataSeries >> at: transform: ifAbsent:
-DataSeries >> atIndex: transform:
-]]]
-
-We can now rewrite the above expression as
-
-[[[
-temperature at: '01:30' asTime transform: [ :x | x * 9/5 + 32 ].
-]]]
-
 !!! Creating a data frame
 
-In this section I will describe different ways of creating a new data frame. I will show how to create data frame from Figure *@weatherDataFrame* and how to initialize an empty data frame.
+In this section, we will look at different ways of creating the weather data frame, described in Section *@weatherDataset*. You will also learn to create empty data frames that can be filled with values later.
 
 !!!! Initializing a data frame with an array of rows
 
-The most basic way to initialize a data frame is with an array (or any other ordered collection) of rows where each row is a collection of elements.
+The most basic way to initialize a data frame is with an array (or any other ordered collection) of rows where each row is a collection of elements. Let's create the weather data frame from its rows:
 
 [[[
 weather := DataFrame withRows: #(
@@ -247,7 +283,7 @@ weather := DataFrame withRows: #(
 
 !!!! Initializing a data frame with an array of columns
 
-Alternatively, you can create a data frame by passing it a collection of columns. This can be handy, for example, when we engineer new features: ==DataFrame withColumns: { income . income ** 2 . income log }==. In our case, we create the same weather dataset:
+Alternatively, you can create a data frame by passing it a collection of columns. This can be handy, for example, when engineering new features: ==DataFrame withColumns: { income . income ** 2 . income log }==. In our case, we create the same weather data frame:
 
 [[[
 weather := DataFrame withColumns: #(
@@ -258,7 +294,7 @@ weather := DataFrame withColumns: #(
 
 !!!! Specifying column and row names
 
-Both expressions in the previous sections produce the same data frame.
+Both expressions in two previous sections create the same data frame.
 
 | |!1 |!2 |!3
 |!1 |2.4 |true |rain
@@ -275,7 +311,7 @@ weather rowNames: (#('01:10' '01:30' '01:50' '02:10' '02:30')
 		collect: #asTime).
 ]]]
 
-Notice that the names don't have to be strings or numbers. They can be any objects, and in this case there are instances of Time. Now the data frame looks the same as the one in Figure *@weatherDataFrame* (A).
+I would like to emphasize that names don't have to be strings or numbers. They can be any objects, and in this case they are instances of Time. Now the data frame looks the same as the table in Figure *@weatherDataFrame* (A).
 
 | |!temperature |!precipitation |!type
 |!1:10 am |2.4 |true |rain
@@ -286,7 +322,7 @@ Notice that the names don't have to be strings or numbers. They can be any objec
 
 !!!! Compact methods for initializing data frames
 
-==DataFrame== provides some syntactic sugar that allows us to initialize it with contents and (optionally) row and column names in a single line. Here is the complete list of those initializers:
+==DataFrame== class provides syntactic sugar that allows us to initialize it with contents and (optionally) row and column names in a single line. Here is the complete list of those initializers:
 
 [[[
 DataFrame class >> withRows: columnNames:
@@ -307,7 +343,7 @@ Sometimes we need to create an empty data frame that will be filled with data la
 DataFrame new. "empty data frame with 0 rows and 0 columns"
 ]]]
 
-This will create an empty data frame with 0 columns and 0 rows. You can also create an empty data frame of a given size (specified as a point ==numberOfRows @ numberOfColumns==). All cells of such data frame will be empty (initialized with ==nil==).
+This will create an empty data frame with no columns and rows. You can also create an empty data frame of a given size by specifying it as a point ==numberOfRows @ numberOfColumns==. All cells of such data frame will be empty (initialized with ==nil==).
 
 [[[
 DataFrame new: 3@4. "empty data frame with 3 rows and 4 columns"
@@ -316,8 +352,8 @@ DataFrame new: 3@4. "empty data frame with 3 rows and 4 columns"
 Similarly to the syntactic sugar described in the previous section, DataFrame class has methods that allow us to create data frames by specifying only their rows, columns, or both. Since we do not provide any data, such data frames with be empty and their sizes will correspond to the provided arrays of rows and columns. For example, if you create an empty data frame with columns ==#(temperature precipitation type)==, its size will be ==0@3==. Here are the methods that can be used to create an empty data frame with names:
 
 [[[
-DataFrame class >> withColumnNames:
 DataFrame class >> withRowNames:
+DataFrame class >> withColumnNames:
 DataFrame class >> withRowNames: columnNames:
 ]]]
 
@@ -336,7 +372,7 @@ emptyWeather := DataFrame
 |!2:10 am |nil |nil |nil
 |!2:30 am |nil |nil |nil
 
-@@note Although it is possible to create an empty data frame using ==DataFrame class >> new== and add rows later by pushing them one by one, this is not recommended. DataFrame is not optimized for insertion of new elements. It may be more efficient to first add rows into an OrderedCollection and then initialize a DataFrame with it.
+@@note Although it is possible to create a data frame with no rows using ==DataFrame class >> new== or ==DataFrame >> withColumnNames:== and add rows later by pushing them one by one, this is not recommended. DataFrame is not optimized for the insertion of new elements. It may be more efficient to first add rows into an OrderedCollection and then initialize a data frame with it.
 
 !!! Inspecting a data frame
 
@@ -346,7 +382,7 @@ It is hard to work with data tables without being able to see them. Fortunately,
 
 !!! Accessing parameters of data frame
 
-Data frames are defined by their contents (table of data), as well as their column and row names. For the simplicity we provide access to some additional parameters such as the dimensions of a data frame. In the following sections, we will discuss how to access row and columns, as well as its individual cells. In this section, I will show you how to get other parameters such as names or sizes.
+Data frames are defined by their contents (table of data), as well as their column and row names. For the simplicity, we provide access to some additional parameters such as the dimensions of a data frame. In the following sections, we will discuss how to access row and columns, as well as its individual cells. In this section, I will show you how to get other parameters such as names or sizes.
 
 !!!! Dimensions
 
@@ -365,7 +401,7 @@ weather dimensions. "5@3"
 
 !!!! Row and column names
 
-Every data frame has names associated to its rows and columns. These names can be used for referencing specific rows or columns (which we will see in the following sections). To get the collection of names for
+Every data frame has names associated to its rows and columns (either used-defined or auto-generated). These names can be used for referencing specific rows or columns (which you will learn in Section *@secAccessingByName*). Let's get the collection of all row and column names of a weather data frame:
 
 [[[
 weather rowNames.
@@ -389,9 +425,10 @@ The result will be a new data frame which looks like this:
 
 !!! Accessing rows and columns
 
-Rows and columns of a data frame can be accessed either by their names or their numeric indexes.
+In this section, I will show you how to get the values of specific rows and columns, as well as how to modify these values. Rows and columns of a data frame can be accessed either by their names or their numeric indexes.
 
 !!!! Accessing by name
+@secAccessingByName
 
 You can get row ==01:50== and the column ==temperature== of the weather data frame by writing:
 
@@ -400,7 +437,7 @@ weather row: '01:50' asTime.
 weather column: #temperature.
 ]]]
 
-You can also modify the values stores in that row or column:
+Use methods ==row: put:== and ==column: put:== to modify the values stored in a row or column:
 
 [[[
 weather row: '01:50' asTime put: #(10 true rain).
@@ -414,18 +451,18 @@ weather column: #temperature put: #(1.2 -2.1 3.4 -5.9 -0.4).
 |!2:10 am |-5.9 |false |-
 |!2:30 am |-0.4 |true |rain
 
-If you reference a row or column by a non-existing name you will get the ==NotFoundError== and if the array you provide is too big or too small, you will get the ==SizeMismatch== error. Notice that you can not add a new column using ==dataFrame column: #newName put newArray==. This is done with ==addColumn:== set of methods that will be described in the following sections.
+If you reference a row or column by a non-existing name you will get the ==NotFoundError== and if the array you provide is too big or too small, the ==SizeMismatch== error will be signaled. Notice that you can not add a new column using ==dataFrame column: #newName put newArray==. This is done with ==addColumn:== set of methods that will be described in the following sections.
 
 !!!! Accessing by index
 
-Alternatively, rows and columns can be accessed using their numeric indices. You can get the same row and column as in the previous example using
+Rows and columns can also be accessed by their numeric indices. You can get the same row and column as in the previous example using
 
 [[[
 weather rowAt: 3.
 weather columnAt: 1.
 ]]]
 
-Similarly, you can modify them using ==rowAt: put:== and ==columnAt: put:==. Let's undo the changes that we made in the previous section:
+To modify them, use ==rowAt: put:== and ==columnAt: put:==.
 
 [[[
 weather rowAt: 3 put: #(-1.2 true snow).
@@ -441,7 +478,7 @@ weather columnAt: 1 put: #(2.4 0.5 -1.2 -2.3 3.2).
 
 !!!! Accessing multiple rows and columns
 
-You can access multiple columns at a same time by providing an array of column names or indices, or by specifying the range of indices. Here is an example of how you can get the three rows in the middle of weather data frame:
+To access multiple rows or columns at a same time, you have to provide an array of names or indices, or specify the range of indices. In the following example, we get the three middle rows of the weather data frame:
 
 [[[
 weather rows: { '01:30' asTime . '01:50' asTime . '02:10' asTime}.
@@ -449,7 +486,7 @@ weather rowsAt: #(2 3 4).
 weather rowsFrom: 2 to: 4.
 ]]]
 
-The same can be done to access, for example, last two columns of our data frame:
+The same can be done to access, for example, the last two columns:
 
 [[[
 weather columns: #(precipitation type).
@@ -704,9 +741,18 @@ We can use it to sum up all values of the two numeric columns: ==temperature== a
 |!temperature |164.68
 |!humidity |294
 
-Additionaly, ==DataFrame== provides special methods for enumerating it with row index.
+Additionally, ==DataFrame== provides special methods for enumerating it with row index. The following table lists all enumeration methods understood by ==DataFrame==:
 
-We do not need to enumerate rows with their names.
+|!Row |!Row and index
+|do: |withIndexDo:
+|select: |withIndexSelect:
+|reject: |withIndexReject:
+|collect: |withIndexCollect:
+|detect: |-
+|detect: ifNone: |-
+|inject: into: |-
+
+We do not need to enumerate rows with their names because each row is a data series which already knows its name.
 
 !!! Aggregation and Grouping
 
@@ -775,6 +821,17 @@ DataFrame >> writeTo: aLocation using: aDataFrameWriter
 
 ==DataFrame-IO== package comes with two subclasses of ==DataFrameReader== and ==DataFrameWriter==: ==DataFrameCsvReader== and ==DataFrameCsvWriter==. They override ==readFrom:== and ==write:to:== methods using ==NeoCSV== ${footnote:note=https://github.com/svenvc/NeoCSV}$ and allow you to make optional configurations, such as specifying the separator character (comma by default) or line end convention (either ==#cr==, ==#lf==, or ==#crlf==, by default we choose the one used by your OS). By default, ==DataFrameCsvReader== will read all columns of the CSV file as data frame columns and assign the default names to rows - numbers from 1 to ==numberOfRows==. However, you can configure it to read first column as row names by sending ==true== to the ==DataFrameCsvReader >> includeRowNames:==. In this case ==aLocation== parameter of ==readFrom:== and ==write:to:== methods is expected to be a ==FileReference==.
 
+Because reading and writing CSV files is very common in data analysis workflow, ==DataFrame== provides shortcuts for these methods:
+
+[[[
+DataFrame class >> readFromCsv:
+DataFrame class >> readFromCsv: withSeparator:
+DataFrame class >> readFromCsvWithRowNames:
+DataFrame class >> readFromCsvWithRowNames: separator:
+DataFrame >> writeToCsv:
+DataFrame >> writeToCsv: withSeparator:
+]]]
+
 !!! Conclusion
 
-==DataFrame== is a powerful abstraction that manipulates and returns ==DataSeries== (named dictionaries).
+This chapter has guided you through the complete functionality of the ==DataFrame== project. It offered you examples of different methods without any logical connection between them. In the following chapters you will find short tutorials which demonstrate the application of data frames to real life problems.
