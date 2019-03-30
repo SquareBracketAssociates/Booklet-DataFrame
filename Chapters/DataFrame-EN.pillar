@@ -7,6 +7,9 @@ In this chapter, I will guide you through the complete functionality of the Data
 
 For the demonstrational purposes, I have designed a simple dataset of meteorological observations. Imagine that in order to study the weather in certain area, you are collecting data by measuring the temperature and logging the type of precipitation (rain, snow etc.) every 20 minutes. The initial table contains only 5 observations (rows) and 3 features (columns): ==temperature==, ==precipitation==, and ==type==. You can see this table in the top left of Figure *@weatherDataFrame*. As we progress through this chapter, we will be modifying, adding, and removing rows and columns of this dataset. Two additional columns that we will add are ==humidity== and ==wind==.
 
++Weather data frame and two data series extracted from it: homogeneous series of temperature column and heterogeneous series of the third row>Images/weather.png|width=80|label=weatherDataFrame+
+
+
 !!! What are data frames and data series
 
 Before moving forward, you need to get a better understanding of the basic data structures that we use to model tabular data. In this section, I will explain the theoretical aspects of data frame and data series collections.
@@ -25,7 +28,7 @@ weather at: 01:30 at: #temperature.
 
 In the top left of Figure *@weatherDataFrame*, you can see our weather dataset represented as a data frame. It contains three columns: ==Float== column of temperatures, ==Boolean== column which tells you whether or not there were any precipitations, and a ==String== column that specifies the type of precipitation. Data types of columns are represented with different background colors.
 
-+Weather data frame and two data series extracted from it: homogeneous series of temperature column and heterogeneous series of the third row>Images/weather.png|width=90|label=weatherDataFrame+
+
 
 It is common to think of rows as observations and columns as features. Therefore, columns are usually homogeneous - they contain values of a same data type, and rows can be heterogeneous - contain values of different types, such as ==Integer==, ==Float==, ==Boolean==, ==String==, etc.
 

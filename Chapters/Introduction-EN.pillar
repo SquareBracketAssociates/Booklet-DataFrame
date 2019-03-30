@@ -44,7 +44,7 @@ Besides PolyMath itself, the PolyMath organization on GitHub hosts other project
 
 !!! Terminology
 
-At this point, you have probably noticed that, depending on the context, the phrase "data frame" can refer to different things. It can be a data structure, a class, a package, or this whole project. In order to remove these ambiguities from our language, I propose the following terminology and stick to it in this booklet:
+At this point, you have probably noticed that, depending on the context, the phrase "data frame" can refer to different things. It can be a data structure, a class, a package, or this whole project. To remove these ambiguities from our language, I propose the following terminology and stick to it in this booklet:
 
 ;data frame
 :\-- general reference to the tabular data structure (collection) designed for data analysis.
@@ -66,7 +66,7 @@ The rest of this booklet is structured in the following way:
 
 !!! How to contribute?
 
-DataFrame is an open source project released under the MIT public license. Although the original codebase was written by me, DataFrame project is a collaborative effort of many people who helped me with their advice, shared their ideas, reported issues, and suggested how to resolve them. There are many ways in which you can help make DataFrame better.
+DataFrame is an open-source project released under the MIT public license. Although the original codebase was written by me, DataFrame project is a collaborative effort of many people who helped me with their advice, shared their ideas, reported issues, and suggested how to resolve them. There are many ways in which you can help make DataFrame better.
 
 If you want to implement new functionality or improve the existing one by rewriting some methods or fixing a bug, you can fork DataFrame repository on GitHub, make your changes, and create a pull request.
 
