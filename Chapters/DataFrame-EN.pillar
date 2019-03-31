@@ -5,7 +5,7 @@ In this chapter, I will guide you through the complete functionality of the Data
 !!! Weather dataset
 @weatherDataset
 
-For the demonstrational purposes, I have designed a simple dataset of meteorological observations. Imagine that in order to study the weather in certain area, you are collecting data by measuring the temperature and logging the type of precipitation (rain, snow etc.) every 20 minutes. The initial table contains only 5 observations (rows) and 3 features (columns): ==temperature==, ==precipitation==, and ==type==. You can see this table in the top left of Figure *@weatherDataFrame*. As we progress through this chapter, we will be modifying, adding, and removing rows and columns of this dataset. Two additional columns that we will add are ==humidity== and ==wind==.
+For the demonstrational purposes, I have designed a simple dataset of meteorological observations. Imagine that to study the weather in certain area, you are collecting data by measuring the temperature and logging the type of precipitation (rain, snow etc.) every 20 minutes. The initial table contains only 5 observations (rows) and 3 features (columns): ==temperature==, ==precipitation==, and ==type==. You can see this table in the top left of Figure *@weatherDataFrame*. As we progress through this chapter, we will be modifying, adding, and removing rows and columns of this dataset. Two additional columns that we will add are ==humidity== and ==wind==.
 
 +Weather data frame and two data series extracted from it: homogeneous series of temperature column and heterogeneous series of the third row>Images/weather.png|width=80|label=weatherDataFrame+
 
@@ -14,7 +14,7 @@ For the demonstrational purposes, I have designed a simple dataset of meteorolog
 
 Before moving forward, you need to get a better understanding of the basic data structures that we use to model tabular data. In this section, I will explain the theoretical aspects of data frame and data series collections.
 
-Data frame is a table of data. Similar to Excel spreadsheet or a relational database, but implemented as a collection that can be stored in a variable, such as ==Array== or ==Dictionary==. This greatly simplifies the data analysis workflow. Because, in order to answer questions such as ''"What was the temperature at 01:30?"'' or ''"What is the average humidity when it snows?"'', we do not need to set up a whole database. Instead, we can simply load our data into a variable and query it - all in three lines of code (you will learn how to do it by reading the rest of this chapter):
+Data frame is a table of data. Similar to Excel spreadsheet or a relational database, but implemented as a collection that can be stored in a variable, such as ==Array== or ==Dictionary==. This greatly simplifies the data analysis workflow. Because, to answer questions such as ''"What was the temperature at 01:30?"'' or ''"What is the average humidity when it snows?"'', we do not need to set up a whole database. Instead, we can simply load our data into a variable and query it - all in three lines of code (you will learn how to do it by reading the rest of this chapter):
 
 [[[
 weather := DataFrame readFromCsv: 'weather.csv'.
@@ -23,7 +23,7 @@ weather := DataFrame readFromCsv: 'weather.csv'.
 weather at: 01:30 at: #temperature.
 
 "Question 2"
-(weather group: #temperature by: #type aggregateUsing: #avarage) at: #snow.
+(weather group: #temperature by: #type aggregateUsing: #average) at: #snow.
 ]]]
 
 In the top left of Figure *@weatherDataFrame*, you can see our weather dataset represented as a data frame. It contains three columns: ==Float== column of temperatures, ==Boolean== column which tells you whether or not there were any precipitations, and a ==String== column that specifies the type of precipitation. Data types of columns are represented with different background colors.
@@ -40,7 +40,7 @@ In the following section I will show you how to create a weather data frame and 
 
 !!! Installation
 
-In order to install DataFrame, go to the Playground (Ctrl\+O\+W) in your fresh Pharo image and execute the following Metacello script (select it and press Do-it button or Ctrl\+D):
+To install DataFrame, go to the Playground (Ctrl\+O\+W) in your fresh Pharo image and execute the following Metacello script (select it and press Do-it button or Ctrl\+D):
 
 [[[language=smalltalk
 Metacello new
@@ -124,7 +124,7 @@ That last expression has a shorter form which produces the same result:
 #(2.4 0.5 -1.2 -2.3 3.2) asDataSeries.
 ]]]
 
-!!! Few more words about data series
+!!! Discovering data series API
 
 ==DataSeries== is an extended ==OrderedDictionary==. It combines the API of both ==Dictionary== and ==SequenceableCollection==, and adds some additional functionality that can be useful for data analysis. This simple data structure does not require a long introduction but it is still worth to demonstrate how it can be used. In this section, I briefly cover the public API of a ==DataSeries== class and describe the additional methods that are not present in other Pharo collections.
 
@@ -132,7 +132,7 @@ That last expression has a shorter form which produces the same result:
 
 In this aspect, ==DataSeries== acts like an ==OrderedDictionary==. You can access an element at a certain key using ==at: aKey== message, you can modify this element with ==at: aKey put: newValue==. To remove an element, use ==removeAt: aKey==. If ==aKey== is not present in the data series, a new element will be created and added to the end. Alternatively, you can use methods such as ==at: ifAbsent:==, ==at: ifAbsentPut:==, etc. to provide custom block that will be evaluated when ==aKey== is not found.
 
-You can also access elements by their index rather than key with methods ==atIndex:==, ==atIndex: put:==, and ==removeAtIndex:==. ==DataSeries== provides additional set of ==at: transform:== modifying accessors that will be introduced in Section *@secAtTransform*.
+You can also access elements by their index rather than key with methods ==atIndex:==, ==atIndex: put:==, and ==removeAtIndex:==. 
 
 Here is the list of some accessors provided by ==DataSeries==. This list is incomplete. Many other accessors are inherited from ==OrderedCollection== class. They can come in handy but we do not discuss them in this booklet:
 
@@ -144,13 +144,17 @@ DataSeries >> removeAt:
 DataSeries >> atIndex:
 DataSeries >> atIndex: put:
 DataSeries >> removeAtIndex:
-DataSeries >> at: transform:
-DataSeries >> at: transform: ifAbsent:
-DataSeries >> atKey: transform:
 ]]]
 
-!!!! at: transform:
+Now we present the non traditional and powerful API of ==DataSeries==.
+
+
+
+!!! at:transform:
 @secAtTransform
+
+
+==DataSeries== provides additional set of ==at: transform:== modifying accessors that will be introduced in Section *@secAtTransform*.
 
 Consider a situation when you want to convert a certain value of the temperature data series from Celsius to Fahrenheit. Having to specify key twice we make the whole expression long and hard to comprehend:
 
@@ -172,7 +176,7 @@ We can now rewrite the above expression as
 temperature at: '01:30' asTime transform: [ :x | x * 9/5 + 32 ].
 ]]]
 
-!!!! Enumerating values of data series
+!!! Enumerating values of data series
 
 As a combination of ==Dictionary== and ==SequenceableCollection==, ==DataSeries== understands the following methods for enumerating its values:
 
@@ -185,10 +189,18 @@ As a combination of ==Dictionary== and ==SequenceableCollection==, ==DataSeries=
 |detect: ifNone: |withKeyDetect: ifNone: |withIndexDetect: ifNone:
 |inject: into: |- |-
 
-!!!! Arithmetical and statistical operations
+@@todo add one example!
+
+
+!!! Arithmetical and statistical operations
 
 Similarly to other collections in Pharo, ==DataSeries== responds to basic arithmetical operations, such as ==+, -, *, /==. You can apply these operations on any of the following combinations: series-scalar, scalar-series, or series-series. When an operation is applied to a scalar and a series, it is performed on every element of a series with the given scalar. For example, if you add one to a data series, it will be added to every element. When the operation is applied to a pair of two data series, it will be performed in the elementwise manner. So, for example, if you want to multiply two data series ==a== and ==b==, you will get a third series where first element is the product of the first elements of ==a== and ==b==, second element is the product of second elements, etc. In this case, both data series must be of the same size.
 
+@@todo add one example!
+
+@@todo add one example!
+
+!!! Statistical operations
 In addition to statistical methods understood by all collections, such as ==average==, ==min==, or ==max==, ==DataSeries== class provides methods more advanced methods that are commonly used when analysing quantitative columns. Here is the complete list of statistical methods understood by ==DataSeries==:
 
 [[[
@@ -210,11 +222,14 @@ DataSeries >> interquartileRange
 
 If any of these methods is applied to a non-numerical data series, it will signal an exception.
 
-!!!! summary
+@@todo add one example!
+
+
+!!!! Summarizing a DataSeries
 
 You can get a quick summary of the distribution of a numerical data series as a collection of its minimal and maximal values, first and third quartiles, average value, and a median.
 
-Let's see how it works for a temperature series, created in *@secCreatingDataSeries*:
+Let's see how it works for the temperature series created in *@secCreatingDataSeries*:
 
 [[[
 temperature summary.
@@ -228,7 +243,7 @@ temperature summary.
 |!3rd Qu. |2.4
 |!Max |3.2
 
-!!!! crossTabulateWith:
+!!! crossTabulateWith:
 
 Cross tabulation is a powerful way to analyse the correlation between two categorical series. It creates a table with rows corresponding to the unique values of the first series, columns corresponding to the unique values of second series, and each cell containing the count of those value pairs.
 
@@ -269,7 +284,8 @@ We get a data frame of counts and proportions:
 
 !!! Creating a data frame
 
-In this section, we will look at different ways of creating the weather data frame, described in Section *@weatherDataset*. You will also learn to create empty data frames that can be filled with values later.
+In this section, we will look at different ways of creating the weather data frame described in Section *@weatherDataset*. 
+You will also learn to create empty data frames that can be filled with values later.
 
 !!!! Initializing a data frame with an array of rows
 
@@ -277,10 +293,10 @@ The most basic way to initialize a data frame is with an array (or any other ord
 
 [[[
 weather := DataFrame withRows: #(
-  (2.4 true rain)
+	(2.4 true rain)
 	(0.5 true rain)
-  (-1.2 true snow)
-  (-2.3 false -)
+	(-1.2 true snow)
+	(-2.3 false -)
 	(3.2 true rain)).
 ]]]
 
@@ -309,6 +325,11 @@ Both expressions in two previous sections create the same data frame.
 Since the names of rows and columns were not specified, they were initialized with their default values: ==(1 to: self numberOfRows)== and ==(1 to: self numberOfColumns)==. We can provide more meaningful names:
 
 [[[
+weather := DataFrame withColumns: #(
+  (2.4 0.5 -1.2 -2.3 3.2)
+  (true true true false true)
+  (rain rain snow - rain)).
+
 weather columnNames: #(temperature precipitation type).
 weather rowNames: (#('01:10' '01:30' '01:50' '02:10' '02:30')
 		collect: #asTime).
@@ -338,7 +359,7 @@ DataFrame class >> withColumns: rowNames: columnNames:
 
 Whenever row or column names are not specified, they are initialized with their default values.
 
-!!!! Creating empty data frames
+!!! Creating empty data frames
 
 Sometimes we need to create an empty data frame that will be filled with data later on. The easiest way of doing this is with
 
@@ -805,7 +826,8 @@ Notice that ==count== column is constructed by aggregating groups of ==temperatu
 
 In practice, data frames are useful when you can load some data from an external source into a data frame, modify and analyse it, then save result. External source can be a CSV or Excel file, a database connection, or any other source of data In this section I will describe the ==DataFrame-IO== package of the ==DataFrame project== which allows you to load and save data frames.
 
-==DataFrame-IO== provides two abstract classes: ==DataFrameReader== and ==DataFrameWriter==. Each of them has only one abstract method: ==DataFrameReader >> readFrom: aLocation== (expected to return a data frame) and ==DataFrameWriter >> write: aDataFrame to: aLocation==. In order to add support for some external data source, you need to override those methods in your subclasses, providing the actual algorithm for reading and writing data. ==DataFrame== has two methods that allow you to read or write it using your reader or writer:
+==DataFrame-IO== provides two abstract classes: ==DataFrameReader== and ==DataFrameWriter==. Each of them has only one abstract method: ==DataFrameReader >> readFrom: aLocation== (expected to return a data frame) and ==DataFrameWriter >> write: aDataFrame to: aLocation==. 
+To add support for some external data source, you need to override those methods in your subclasses, providing the actual algorithm for reading and writing data. ==DataFrame== has two methods that allow you to read or write it using your reader or writer:
 
 [[[
 DataFrame class >> readFrom: aLocation using: aDataFrameReader
