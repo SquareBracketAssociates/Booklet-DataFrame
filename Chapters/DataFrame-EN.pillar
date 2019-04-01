@@ -269,7 +269,57 @@ fahrenheit := temperature * 9/5 + 32.
 
 The result will be the same as before.
 
+!!! Some useful mathematical functions
+
+Although, you can apply any operation to the elements of your series using ==collect:==, sometimes your code will be more readable if you send a message to the whole data series and expect it to be performed on all its elements. In the same way as when we add 1 to a data series and get a new series with all elements of the first series incremented by 1, we also want to say ==series exp== and expect a data series of exponents.
+
+Here is the list of mathematical operations that are understood by ==DataSeries== and can be performed in the elementwise manner:
+
+[[[
+DataSeries >> abs
+DataSeries >> cos
+DataSeries >> sin
+DataSeries >> tan
+DataSeries >> exp
+DataSeries >> ln
+DataSeries >> log
+DataSeries >> log:
+DataSeries >> sqrt
+DataSeries >> **
+]]]
+
+The last one is the binary operator which takes data series as the first operand and raises all its elements to the power of second operand.
+
+Let's find the exponent and the natural logarithm of the temperature series:
+
+[[[
+temperature exp.
+]]]
+
+| |!temperature
+|!1 |11.02
+|!2 |1.65
+|!3 |0.3
+|!4 |0.1
+|!5 |24.53
+
+As we take the natural logarithm, the third and fourth elements in the resulting data series are ==Float nan== because logarithms are only defined for positive numbers and those two temperatures are below zero:
+
+[[[
+temperature ln.
+]]]
+
+| |!temperature
+|!1 |0.88
+|!2 |-0.69
+|!3 |Float nan
+|!4 |Float nan
+|!5 |1.16
+
+@@note Unlike most other programming languages and libraries for numerical coomputations that define ==log== as natural logarithm, Pharo defines it as a logarithm with base 10. Natural logarithm is defined as ==ln==. And parametrised message ==log:== can be used to get a logarithm with any other base, for example: ==(1024 log: 2) = 10.0==.
+
 !!! Statistical operations
+
 In addition to statistical methods understood by all collections, such as ==average==, ==min==, or ==max==, ==DataSeries== class provides methods more advanced methods that are commonly used when analysing quantitative columns. Here is the complete list of statistical methods understood by ==DataSeries==:
 
 [[[
