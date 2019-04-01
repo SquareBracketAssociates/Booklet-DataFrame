@@ -132,7 +132,7 @@ That last expression has a shorter form which produces the same result:
 
 In this aspect, ==DataSeries== acts like an ==OrderedDictionary==. You can access an element at a certain key using ==at: aKey== message, you can modify this element with ==at: aKey put: newValue==. To remove an element, use ==removeAt: aKey==. If ==aKey== is not present in the data series, a new element will be created and added to the end. Alternatively, you can use methods such as ==at: ifAbsent:==, ==at: ifAbsentPut:==, etc. to provide custom block that will be evaluated when ==aKey== is not found.
 
-You can also access elements by their index rather than key with methods ==atIndex:==, ==atIndex: put:==, and ==removeAtIndex:==. 
+You can also access elements by their index rather than key with methods ==atIndex:==, ==atIndex: put:==, and ==removeAtIndex:==.
 
 Here is the list of some accessors provided by ==DataSeries==. This list is incomplete. Many other accessors are inherited from ==OrderedCollection== class. They can come in handy but we do not discuss them in this booklet:
 
@@ -148,11 +148,8 @@ DataSeries >> removeAtIndex:
 
 Now we present the non traditional and powerful API of ==DataSeries==.
 
-
-
 !!! at:transform:
 @secAtTransform
-
 
 ==DataSeries== provides additional set of ==at: transform:== modifying accessors that will be introduced in Section *@secAtTransform*.
 
@@ -177,6 +174,7 @@ temperature at: '01:30' asTime transform: [ :x | x * 9/5 + 32 ].
 ]]]
 
 !!! Enumerating values of data series
+@secEnumeratingSeries
 
 As a combination of ==Dictionary== and ==SequenceableCollection==, ==DataSeries== understands the following methods for enumerating its values:
 
@@ -189,16 +187,87 @@ As a combination of ==Dictionary== and ==SequenceableCollection==, ==DataSeries=
 |detect: ifNone: |withKeyDetect: ifNone: |withIndexDetect: ifNone:
 |inject: into: |- |-
 
-@@todo add one example!
+For example, we can collect the Fahrenheit values of ==temperature== into a separate series:
 
+[[[
+fahrenheit := temperature collect: [ :x | x * 9/5 + 32 ].
+]]]
 
-!!! Arithmetical and statistical operations
+| |!temperature
+|!1 |36.32
+|!2 |32.9
+|!3 |29.84
+|!4 |27.86
+|!5 |37.76
 
-Similarly to other collections in Pharo, ==DataSeries== responds to basic arithmetical operations, such as ==+, -, *, /==. You can apply these operations on any of the following combinations: series-scalar, scalar-series, or series-series. When an operation is applied to a scalar and a series, it is performed on every element of a series with the given scalar. For example, if you add one to a data series, it will be added to every element. When the operation is applied to a pair of two data series, it will be performed in the elementwise manner. So, for example, if you want to multiply two data series ==a== and ==b==, you will get a third series where first element is the product of the first elements of ==a== and ==b==, second element is the product of second elements, etc. In this case, both data series must be of the same size.
+Notice that the name of this data series is still ==temperature==, because that was the name of a series from which the values were collected, and no other name was provided by the ==collect:== message. If needed, you can rename the ==fahrenheit== series later:
 
-@@todo add one example!
+[[[
+fahrenheit name: #fahrenheit.
+]]]
 
-@@todo add one example!
+To see another example of enumerating values of data series, let's now find the first value of the ==fahrenheit== series that is below 32 (zero on Celsius scale):
+
+[[[
+fahrenheit detect: [ :x | x < 32 ].
+]]]
+
+The answer will be ==29.84== - the third element of our series.
+
+!!! Arithmetical operations
+
+Similarly to other collections in Pharo, ==DataSeries== responds to basic arithmetical operations, such as ==+, -, *, /==. You can apply these operations on any of the following combinations: series-series, series-scalar, or scalar-series (although, the last one is not supported for division).
+
+In order to demonstrate the application of arithmetical operations, let's create two simple data series filled with numbers:
+
+[[[
+a := DataSeries withValues: #(0.5 2 -1 0) name: #a.
+b := DataSeries withValues: #(-2 -0.5 1 3) name: #b.
+]]]
+
+When an operation is applied to a scalar and a series, it is performed on every element of a series with the given scalar. For example, if you divid data series ==a== by 2, each of its elements will be divided by 2:
+
+[[[
+a / 2.
+]]]
+
+| |!a
+|!1 |0.25
+|!2 |1
+|!3 |-0.5
+|!4 |0
+
+Similarly, if you subtract data series ==b== from the number 1, you will get a new series, in which each element is the difference between 1 and the corresponding element of series ==b==:
+
+[[[
+1 - b.
+]]]
+
+| |!b
+|!1 |3
+|!2 |1.5
+|!3 |0
+|!4 |-2
+
+When the operation is applied to a pair of two data series, it will be performed in the elementwise manner. So, for example, if you want to add two data series ==a== and ==b==, you will get a third series where first element is the sum of the first elements of ==a== and ==b==, second element is the sum of second elements, etc. In this case, both data series must be of the same size and must have same keys. The name of the resulting series will be the same as the name of the first operand:
+
+[[[
+a + b.
+]]]
+
+| |!a
+|!1 |-1.5
+|!2 |1.5
+|!3 |0
+|!4 |3
+
+In fact, the conversion of ==temperature== series to Fahrenheit scale, that was demonstrated earlier in Section *@secEnumeratingSeries* with ==collect:== message, can be done directly by applying arithmetical operations to the data series:
+
+[[[
+fahrenheit := temperature * 9/5 + 32.
+]]]
+
+The result will be the same as before.
 
 !!! Statistical operations
 In addition to statistical methods understood by all collections, such as ==average==, ==min==, or ==max==, ==DataSeries== class provides methods more advanced methods that are commonly used when analysing quantitative columns. Here is the complete list of statistical methods understood by ==DataSeries==:
@@ -222,8 +291,25 @@ DataSeries >> interquartileRange
 
 If any of these methods is applied to a non-numerical data series, it will signal an exception.
 
-@@todo add one example!
+To demonstrate the application of statistical methods, let's find average, median, standard deviation, and variance of the temperature column:
 
+[[[
+temperature average. "0.52"
+temperature median. "0.5"
+temperature stdev. "2.3253"
+temperature variance. "5.407"
+]]]
+
+We can also check if the following equalities hold: zeroth quartile should be the same as min, fourth quartile should be the same as max, second quartile - same as median, interquartile range equals third quartile minus the first one, range is max minus min, and variance is the square of standard deviation:
+
+[[[
+temperature zerothQuartile = temperature min. "true"
+temperature fourthQuartile = temperature max. "true"
+temperature secondQuartile = temperature median. "true"
+temperature interquartileRange = (temperature thirdQuartile - temperature firstQuartile). "true"
+temperature range = (temperature max - temperature min). "true"
+temperature variance = (temperature stdev ** 2). "true"
+]]]
 
 !!!! Summarizing a DataSeries
 
@@ -284,7 +370,7 @@ We get a data frame of counts and proportions:
 
 !!! Creating a data frame
 
-In this section, we will look at different ways of creating the weather data frame described in Section *@weatherDataset*. 
+In this section, we will look at different ways of creating the weather data frame described in Section *@weatherDataset*.
 You will also learn to create empty data frames that can be filled with values later.
 
 !!!! Initializing a data frame with an array of rows
@@ -826,7 +912,7 @@ Notice that ==count== column is constructed by aggregating groups of ==temperatu
 
 In practice, data frames are useful when you can load some data from an external source into a data frame, modify and analyse it, then save result. External source can be a CSV or Excel file, a database connection, or any other source of data In this section I will describe the ==DataFrame-IO== package of the ==DataFrame project== which allows you to load and save data frames.
 
-==DataFrame-IO== provides two abstract classes: ==DataFrameReader== and ==DataFrameWriter==. Each of them has only one abstract method: ==DataFrameReader >> readFrom: aLocation== (expected to return a data frame) and ==DataFrameWriter >> write: aDataFrame to: aLocation==. 
+==DataFrame-IO== provides two abstract classes: ==DataFrameReader== and ==DataFrameWriter==. Each of them has only one abstract method: ==DataFrameReader >> readFrom: aLocation== (expected to return a data frame) and ==DataFrameWriter >> write: aDataFrame to: aLocation==.
 To add support for some external data source, you need to override those methods in your subclasses, providing the actual algorithm for reading and writing data. ==DataFrame== has two methods that allow you to read or write it using your reader or writer:
 
 [[[
