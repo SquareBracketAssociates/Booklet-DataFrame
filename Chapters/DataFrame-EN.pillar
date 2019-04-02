@@ -379,18 +379,74 @@ temperature summary.
 |!3rd Qu. |2.4
 |!Max |3.2
 
-!!! crossTabulateWith:
+!!! Working with categorical values
+
+Categorical data series have a fixed dictionary of values. For example, series ==sex== which has values ==Male== and ==Female==, boolean series with values ==true== and ==false==, series with sizes of clothes: ==XS==, ==S==, ==M==, ==L==, ==XL==, etc. We can not perform mathematical and statistical operations on categorical series (except for ==mode==, which only finds the most common value), however there is still a lot of ways to analyse such data. In the rest of this section, I will show you several methods of ==DataSeries== that are especially useful for working with categorical values. The examples will be based on the ==precipitation== and ==type== columns of weather dataset. I remind you how they are created:
+
+[[[
+keys := #('01:10' '01:30' '01:50' '02:10' '02:30') collect: #asTime.
+
+precipitation := DataSeries
+  withKeys: keys
+  values: #(true true true false true)
+  name: #precipitation.
+
+type := DataSeries
+  withKeys: keys
+  values: #(rain rain snow - rain)
+  name: #type.
+]]]
+
+!!!! uniqueValues
+
+The most basic operation that can be performed is finding the unique values of the series:
+
+[[[
+precipitation uniqueValues. "#(false true)"
+type uniqueValues. "#(- rain snow)"
+]]]
+
+This allows us to see the complete dictionary of values used in a data series.
+
+!!!! valueCounts
+
+Another thing you might want to know is how the values of your categorical data series are distributed. How many times did it rain, according to your dataset? How many times did it snow? ==valueCounts== method will give you the counts of unique values in your data series:
+
+[[[
+type valueCounts.
+]]]
+
+| |!type
+|!rain |3
+|!snow |1
+|!- |1
+
+The result will be a data series with unique values as keys and counts as values. It will be sorted by counts in the descending order.
+
+!!!! valueFrequencies
+
+Sometimes, instead of counts, you want to see the relative frequencies of the unique values in your data series:
+
+[[[
+type valueFrequencies.
+]]]
+
+| |!type
+|!rain |(3/5)
+|!snow |(1/5)
+|!- |(1/5)
+
+In fact, it is the same as dividing value counts by the size of your series:
+
+[[[
+type valueFrequencies = (type valueCounts / type size). "true"
+]]]
+
+!!!! crossTabulateWith:
 
 Cross tabulation is a powerful way to analyse the correlation between two categorical series. It creates a table with rows corresponding to the unique values of the first series, columns corresponding to the unique values of second series, and each cell containing the count of those value pairs.
 
-For exmple, let's create two simple data series. We take data from the ==precipitation== and ==type== columns of our weather dataset.
-
-[[[
-precipitation := #(true true true false true) asDataSeries.
-type := #(rain rain snow - rain) asDataSeries.
-]]]
-
-By cross tabulating these two series, we can see that they are closely correlated - when ==precipitation== is ==false==, the ==type== is always empty, and when ==precipitation== is ==true==, the ==type== is either ==rain== or ==snow==:
+By cross tabulating ==precipitation== series with ==type== series, we can see that they are closely correlated - when ==precipitation== is ==false==, the ==type== is always empty, and when ==precipitation== is ==true==, the ==type== is either ==rain== or ==snow==:
 
 [[[
 precipitation crossTabulateWith: type.
@@ -401,22 +457,6 @@ The result will be the data frame of cross tabulated values:
 | |!snow |!rain |!-
 |!false |0 |0 |1
 |!true |1 |3 |0
-
-!!!! frequencyTable
-
-Another valuable statistics that can be used when analysing categorical columns is the frequency distribution of its values. ==DataSeries== provides a handy method which builds a table with two columns: frequencies of unique values as counts and proportions.
-
-Let's build the frequency table for the ==precipitation== data series created in the example from the previous section:
-
-[[[
-precipitation frequencyTable.
-]]]
-
-We get a data frame of counts and proportions:
-
-| |!Count |!Proportion
-|!false |4 |(4/5)
-|!true |1 |(1/5)
 
 !!! Creating a data frame
 
