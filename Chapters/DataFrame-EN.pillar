@@ -151,9 +151,7 @@ Now we present the non traditional and powerful API of ==DataSeries==.
 !!! at:transform:
 @secAtTransform
 
-==DataSeries== provides additional set of ==at: transform:== modifying accessors that will be introduced in Section *@secAtTransform*.
-
-Consider a situation when you want to convert a certain value of the temperature data series from Celsius to Fahrenheit. Having to specify key twice we make the whole expression long and hard to comprehend:
+==DataSeries== provides additional set of ==at: transform:== modifying accessors. Consider a situation when you want to convert a certain value of the temperature data series from Celsius to Fahrenheit. Having to specify key twice we make the whole expression long and hard to comprehend:
 
 [[[
 temperature at: '01:30' asTime put: (temperature at: '01:30' asTime)  * 9/5 + 32.
