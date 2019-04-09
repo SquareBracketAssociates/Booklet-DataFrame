@@ -1,4 +1,4 @@
-# DataFrame
+# Data Analysis Made Simple with Pharo DataFrame
 
 [![Download PDF](https://img.shields.io/badge/Download-PDF-9cf.svg)](https://github.com/SquareBracketAssociates/Booklet-DataFrame/releases/download/continuous/DataFrame-wip.pdf)
 [![Build status][badge]][travis]
