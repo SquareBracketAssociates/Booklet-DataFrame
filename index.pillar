@@ -1,5 +1,0 @@
-${inputFile:path=Chapters/Introduction-EN.pillar}$
-%${inputFile:path=Chapters/DataSeries-EN.pillar}$
-${inputFile:path=Chapters/DataFrame-EN.pillar}$
-%${inputFile:path=Chapters/EsugTweets-EN.pillar}$
-%${inputFile:path=Chapters/IrisDataset-EN.pillar}$
