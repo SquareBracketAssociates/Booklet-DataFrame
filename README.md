@@ -4,3 +4,5 @@
 [![Centralized book generation](https://github.com/SquareBracketAssociates/Booklet-DataFrame/actions/workflows/main.yml/badge.svg)](https://github.com/SquareBracketAssociates/Booklet-DataFrame/actions/workflows/main.yml)
 
 The result from the latest successful build can be found on the release pane of this page.
+
+This booklet is a WIP
