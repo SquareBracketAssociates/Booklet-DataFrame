@@ -323,7 +323,7 @@ temperature ln.
 | 4 | Float nan |
 | 5 | 1.16 |
 
-!!note Unlike most other programming languages and libraries for numerical coomputations that define `log` as natural logarithm, Pharo defines it as a logarithm with base 10. Natural logarithm is defined as `ln` and the parametrised message `log:` can be used to get a logarithm with any other base, for example: `(1024 log: 2) = 10.0`.
+!!note Unlike most other programming languages and libraries for numerical computations that define `log` as natural logarithm, Pharo defines it as a logarithm with base 10. Natural logarithm is defined as `ln` and the parametrised message `log:` can be used to get a logarithm with any other base, for example: `(1024 log: 2) = 10.0`.
 
 ### Statistical operations
 
