@@ -406,13 +406,13 @@ type := DataSeries
 ```
 
 
-#### uniqueValues
+#### removeDuplicates
 
-The most basic operation that can be performed is finding the unique values of the series:
+The most basic operation that can be performed is removing the duplicate values of the series:
 
 ```
-precipitation uniqueValues. "#(false true)"
-type uniqueValues. "#(- rain snow)"
+precipitation removeDuplicates. "#(false true)"
+type removeDuplicates. "#(#snow #rain #-)"
 ```
 
 This allows us to see the complete dictionary of values used in a data series.
