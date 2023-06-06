@@ -415,6 +415,9 @@ precipitation removeDuplicates. "#(false true)"
 type removeDuplicates. "#(#snow #rain #-)"
 ```
 
+!!note In the past, this method was named `#uniqueValues` to follow the naming of Pandas. It got renamed to stay consistent with Pharo's API.
+
+
 This allows us to see the complete dictionary of values used in a data series.
 
 #### valueCounts
