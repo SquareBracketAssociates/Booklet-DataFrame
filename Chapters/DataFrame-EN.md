@@ -496,6 +496,93 @@ The result will be a new `DataSeries` like this: 
 | 4   | #negative   |
 | 5   | #adequate   |
 
+### Handling nil values in a data series
+The DataSeries class provides methods specifically for handling nil values in a data series.
+Consider this data series :
+```
+temperature := DataSeries
+  withValues: #(2.4 nil -1.2 nil 3.2)
+  name: #temperature.
+```
+
+#### Identifying nil values
+The `hasNil` method returns true if the data series has at least one nil value.
+```
+temperature hasNil. "true"
+```
+
+#### Removing nil values
+The `removeNils` method removes elements with nil values from the data series.
+```
+temperature removeNils.
+```
+| key | value |
+| --- | ----- |
+| 1   | 2.4   |
+| 3   | -1.2  |
+| 5   | 3.2   |
+
+#### Replacing nil values
+Rather than simply removing nil values from the data series, nil values can also be replaced by user defined or statistical alternatives.
+
+- `replaceNilsWith: anObject` : Replaces all nil values in the data series with the provided object, `anObject`.
+
+- `replaceNilsWithAverage` : Replaces all nil values in the data series with the average value of the data series.
+
+- `replaceNilsWithMedian` : Replaces all nil values in the data series with the median of the data series.
+
+- `replaceNilsWithMode` : Replaces all nil values in the data series with the mode of the data series.
+
+- `replaceNilsWithNextValue` : Replaces all nil values in the data series with the value of the next non-nil element in the data series.
+
+- `replaceNilsWithPreviousValue` : Replaces all nil values in the data series with the value of the previous non-nil element in the data series.
+
+- `replaceNilsWithZero` : Replaces all nil values in the data series with zero.
+
+Suppose the user wants to replace all the nil values with 5.
+```
+temperature replaceNilsWith: 5.
+```
+| key | value |
+| --- | ----- |
+| 1   | 2.4   |
+| 2   | 5     |
+| 3   | -1.2  |
+| 4   | 5     |
+| 5   | 3.2   |
+
+If you want to replace nil values with a statistical value such as the median of the data series :
+```
+temperature replaceNilsWithMedian.
+```
+| key | value |
+| --- | ----- |
+| 1   | 2.4   |
+| 2   | 2.4   |
+| 3   | -1.2  |
+| 4   | 2.4   |
+| 5   | 3.2   |
+
+You can also replace nil values with adjacent values ( the non-nil value appearing before the nil value in this example ) in the data series :
+```
+temperature replaceNilsWithPreviousValue.
+```
+| key | value |
+| --- | ----- |
+| 1   | 2.4   |
+| 2   | 2.4   |
+| 3   | -1.2  |
+| 4   | -1.2  |
+| 5   | 3.2   |
+
+#### Counting nil values
+
+You can count the number of nil values in a data series using `countNils` and the number of non-nil values in a data series using `countNonNils`.
+```
+temperature countNils. "2"
+temperature countNonNils. "3"
+```
+
 ### Creating a data frame
 
 In this section, we will look at different ways of creating the weather data frame described in Section *@weatherDataset@*.
