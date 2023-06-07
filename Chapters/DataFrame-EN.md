@@ -1179,6 +1179,160 @@ Notice that the `count` column is constructed by aggregating groups of `temperat
 | rain | 3 | 32.9 | 37.76 | 85 |
 | snow | 1 | 29.84 | 29.84 | 23 |
 
+### Handling Nil Values in  DataFrames
+
+DataFrames are a powerful tool for working with structured data in Pharo. They allow us to organize, manipulate, and analyze data efficiently. However, real-world datasets often contain missing or undefined values, represented as "nil" in Pharo. Handling nil values appropriately is crucial to ensure accurate and reliable data analysis. In this section, we will explore various methods available in Pharo's DataFrame package for handling nil values effectively.
+
+#### Identifying Nil Values
+
+Before we can handle nil values, it is essential to identify their presence within a data frame. Pharo's DataFrame package provides these methods for detecting nil values:
+
+- `hasNils`: This method returns true if there is at least one nil value in the data frame.
+
+- `hasNilsByColumn` : Returns a dictionary indicating the presence of any nil values column-wise. The keys of the dictionary represent the column names, and the values ( true or false ) indicate whether nil values exist in the corresponding column.
+
+- `numberOfNils` : Returns a dictionary indicating the number of nil values column-wise. The keys of the dictionary represent the column names, and the values represent the count of nil values in each column.
+
+Suppose we had this data frame :
+```
+weather := DataFrame withRows: #(
+	(2.4 true rain)
+	(0.5 true nil)
+	(-1.2 true snow)
+	(-2.3 nil nil)
+	(3.2 true rain)).
+	
+weather columnNames: #(temperature precipitation type).
+
+weather rowNames: #( '01:10' '01:30' '01:50' '02:10' '02:30').
+```
+Since this is a small data frame, it can easily be seen that it has nil values, however if the data frame is large, it will be difficult to physically check the data frame for nil values. This is where `hasNils` becomes useful : 
+```
+weather hasNils. "true"
+```
+You can also see in which columns these nil values are present :
+```
+weather hasNilsByColumn.
+```
+| key | value |
+| --- | --- |
+| precipitation | true |
+| type | true |
+| temperature | false |
+
+You can even find out the number of nil values in each column : 
+```
+weather numberOfNils.
+```
+| key | value |
+| --- | --- |
+| precipitation | 1 |
+| type | 2 |
+| temperature | 0 |
+
+
+#### Removing Nil Values
+
+When dealing with nil values, it may be necessary to remove or filter out rows or columns containing these values. It should be noted that usually in Data Science and Machine Learning tasks, columns are removed only if there are many nil values in that column or if the column doesn't contain a lot of information that helps your analysis and rows are removed if the number of rows with nil values is very less compared to the total number of rows. The following methods assist in removing nil values:
+
+- `removeColumnsWithNilsAtRow` : Removes all columns with nil values at a specified row number from the data frame.
+
+- `removeColumnsWithNilsAtRowNamed` : Removes all columns with nil values at a specified row name from the dataframe.
+
+- `removeRowsWithNils` : Removes all rows from the data frame that have at least one nil value.
+
+- `removeRowsWithNilsAtColumn` : Removes all rows with nil values at a specified column number from the data frame.
+
+- `removeRowsWithNilsAtColumnNamed` : Removes all rows with nil values at a specified column name from the data frame.
+
+If you want to remove all columns which have their second value as a nil value :
+```
+weather removeColumnsWithNilsAtRow: 2.
+```
+|  | temperature | precipitation |
+| --- | --- | --- |
+| 1:10 am | 2.4 | true |
+| 1:30 am | 0.5 | true |
+| 1:50 am | -1.2 | true |
+| 2:10 am | -2.3 | nil |
+| 2:30 am | 3.2 | true |
+
+You can remove all rows from a data frame which have at least one nil value :
+```
+weather removeRowsWithNils.
+```
+|  | temperature | precipitation | type |
+| --- | --- | --- | --- |
+| 1:10 am | 2.4 | true | rain |
+| 1:50 am | -1.2 | true | snow |
+| 2:30 am | 3.2 | true | rain |
+
+If you want to remove rows which have nil values in the column 'precipitation' :
+```
+weather removeRowsWithNilsAtColumnNamed: 'precipitation'.
+```
+|  | temperature | precipitation | type |
+| --- | --- | --- | --- |
+| 1:10 am | 2.4 | true | rain |
+| 1:30 am | 0.5 | true | nil |
+| 1:50 am | -1.2 | true | snow |
+| 2:30 am | 3.2 | true | rain |
+
+
+#### Replacing Nil Values
+
+In certain cases, it might be more appropriate to replace nil values with meaningful alternatives. It is important to note that the choice of replacement method depends on the nature of the data and the specific analysis goals. Different replacement strategies can be applied based on the characteristics and patterns of the missing data. Pharo's DataFrame package provides various methods for replacing nil values with the user’s desired alternatives as well as statistical alternatives :
+
+- `replaceNilsWith: anObject` : Replaces all nil values in the data frame with the provided object, `anObject`.
+
+- `replaceNilsWithAverage` : Replaces all nil values in the data frame with the average value of the column in which they are present.
+
+- `replaceNilsWithMedian` : Replaces all nil values in the data frame with the median of the column in which they are present.
+
+- `replaceNilsWithMode` : Replaces all nil values in the data frame with the mode of the column in which they are present.
+
+- `replaceNilsWithNextRowValue` : Replaces all nil values in the data frame with the value of the next non-nil element in the same column.
+
+- `replaceNilsWithPreviousRowValue` : Replaces all nil values in the data frame with the value of the previous non-nil element in the same column.
+
+- `replaceNilsWithZero` : Replaces all nil values in the data frame with zero.
+
+If you want to replace all nil values in a data frame with 'value' :
+```
+weather replaceNilsWith: 'value' .
+```
+|         | temperature | precipitation | type  | 
+| ------- | ----------- | ------------- | ----- | 
+| '01:10' | 2.4         | true          | rain  | 
+| '01:30' | 0.5         | true          | value | 
+| '01:50' | -1.2        | true          | snow  | 
+| '02:10' | -2.3        | value         | value | 
+| '02:30' | 3.2         | true          | rain  | 
+
+You can replace all nil values in a column with a statistical value of that column, this example replaces nil values with the mode value of that column : 
+```
+weather replaceNilsWithMode .
+```
+|         | temperature | precipitation | type | 
+| ------- | ----------- | ------------- | ---- | 
+| '01:10' | 2.4         | true          | rain | 
+| '01:30' | 0.5         | true          | rain | 
+| '01:50' | -1.2        | true          | snow | 
+| '02:10' | -2.3        | true          | rain | 
+| '02:30' | 3.2         | true          | rain | 
+
+If you want to replace nil values with the previous non-nil value in the same column :
+```
+weather replaceNilsWithNextRowValue .
+```
+|         | temperature | precipitation | type | 
+| ------- | ----------- | ------------- | ---- | 
+| '01:10' | 2.4         | true          | rain | 
+| '01:30' | 0.5         | true          | snow | 
+| '01:50' | -1.2        | true          | snow | 
+| '02:10' | -2.3        | true          | rain | 
+| '02:30' | 3.2         | true          | rain | 
+
 ### Reading from and writing to files
 
 In practice, data frames are useful when you can load some data from an external source into a data frame, modify and analyse it, and then save the result. The external source can be a CSV or Excel file, a database connection, or any other source of data. In this section, I will describe the `DataFrame-IO` package of the `DataFrame project` which allows you to load and save data frames.
