@@ -1179,11 +1179,11 @@ Notice that the `count` column is constructed by aggregating groups of `temperat
 | rain | 3 | 32.9 | 37.76 | 85 |
 | snow | 1 | 29.84 | 29.84 | 23 |
 
-### Handling Nil Values in  DataFrames
+### Handling nil values
 
 DataFrames are a powerful tool for working with structured data in Pharo. They allow us to organize, manipulate, and analyze data efficiently. However, real-world datasets often contain missing or undefined values, represented as "nil" in Pharo. Handling nil values appropriately is crucial to ensure accurate and reliable data analysis. In this section, we will explore various methods available in Pharo's DataFrame package for handling nil values effectively.
 
-#### Identifying Nil Values
+#### Identifying nil values
 
 Before we can handle nil values, it is essential to identify their presence within a data frame. Pharo's DataFrame package provides these methods for detecting nil values:
 
@@ -1231,7 +1231,7 @@ weather numberOfNils.
 | temperature | 0 |
 
 
-#### Removing Nil Values
+#### Removing nil values
 
 When dealing with nil values, it may be necessary to remove or filter out rows or columns containing these values. It should be noted that usually in Data Science and Machine Learning tasks, columns are removed only if there are many nil values in that column or if the column doesn't contain a lot of information that helps your analysis and rows are removed if the number of rows with nil values is very less compared to the total number of rows. The following methods assist in removing nil values:
 
@@ -1279,7 +1279,7 @@ weather removeRowsWithNilsAtColumnNamed: 'precipitation'.
 | 2:30 am | 3.2 | true | rain |
 
 
-#### Replacing Nil Values
+#### Replacing nil values
 
 In certain cases, it might be more appropriate to replace nil values with meaningful alternatives. It is important to note that the choice of replacement method depends on the nature of the data and the specific analysis goals. Different replacement strategies can be applied based on the characteristics and patterns of the missing data. Pharo's DataFrame package provides various methods for replacing nil values with the user’s desired alternatives as well as statistical alternatives :
 
