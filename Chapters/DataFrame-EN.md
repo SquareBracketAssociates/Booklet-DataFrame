@@ -323,7 +323,7 @@ temperature ln.
 | 4 | Float nan |
 | 5 | 1.16 |
 
-!!note Unlike most other programming languages and libraries for numerical coomputations that define `log` as natural logarithm, Pharo defines it as a logarithm with base 10. Natural logarithm is defined as `ln` and the parametrised message `log:` can be used to get a logarithm with any other base, for example: `(1024 log: 2) = 10.0`.
+!!note Unlike most other programming languages and libraries for numerical computations that define `log` as natural logarithm, Pharo defines it as a logarithm with base 10. Natural logarithm is defined as `ln` and the parametrised message `log:` can be used to get a logarithm with any other base, for example: `(1024 log: 2) = 10.0`.
 
 ### Statistical operations
 
@@ -406,14 +406,17 @@ type := DataSeries
 ```
 
 
-#### uniqueValues
+#### removeDuplicates
 
-The most basic operation that can be performed is finding the unique values of the series:
+The most basic operation that can be performed is removing the duplicate values of the series:
 
 ```
-precipitation uniqueValues. "#(false true)"
-type uniqueValues. "#(- rain snow)"
+precipitation removeDuplicates. "#(false true)"
+type removeDuplicates. "#(#snow #rain #-)"
 ```
+
+!!note In the past, this method was named `#uniqueValues` to follow the naming of Pandas. It got renamed to stay consistent with Pharo's API.
+
 
 This allows us to see the complete dictionary of values used in a data series.
 
