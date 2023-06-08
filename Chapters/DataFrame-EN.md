@@ -533,9 +533,9 @@ Rather than simply removing nil values from the data series, nil values can also
 
 - `replaceNilsWithMode` : Replaces all nil values in the data series with the mode of the data series.
 
-- `replaceNilsWithNextValue` : Replaces all nil values in the data series with the value of the next non-nil element in the data series.
+- `replaceNilsWithNextValue` : Replaces all nil values in the data series with the value of the next non-nil element in the data series. If the last value in the data series is nil, it will remain nil even after using this method because there is no value after it which can replace it.
 
-- `replaceNilsWithPreviousValue` : Replaces all nil values in the data series with the value of the previous non-nil element in the data series.
+- `replaceNilsWithPreviousValue` : Replaces all nil values in the data series with the value of the previous non-nil element in the data series. If the first value in the data series is nil, it will remain nil even after using this method because there is no value before it which can replace it.
 
 - `replaceNilsWithZero` : Replaces all nil values in the data series with zero.
 
@@ -1291,9 +1291,9 @@ In certain cases, it might be more appropriate to replace nil values with meanin
 
 - `replaceNilsWithMode` : Replaces all nil values in the data frame with the mode of the column in which they are present.
 
-- `replaceNilsWithNextRowValue` : Replaces all nil values in the data frame with the value of the next non-nil element in the same column.
+- `replaceNilsWithNextRowValue` : Replaces all nil values in the data frame with the value of the next non-nil element in the same column. If the last value of a column in the data frame is nil, it will remain nil even after using this method because there is no value after it in the column which can replace it.
 
-- `replaceNilsWithPreviousRowValue` : Replaces all nil values in the data frame with the value of the previous non-nil element in the same column.
+- `replaceNilsWithPreviousRowValue` : Replaces all nil values in the data frame with the value of the previous non-nil element in the same column. If the first value of a column in the data frame is nil, it will remain nil even after using this method because there is no value before it in the column which can replace it.
 
 - `replaceNilsWithZero` : Replaces all nil values in the data frame with zero.
 
